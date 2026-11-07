@@ -729,15 +729,74 @@
 
     [".footer__copy", "Travel. Learn. Play. Make. Back the future."],
     ['.footer__links a[href="#services"]', "All services"],
+    ['.footer__links a[href="#why"]', "Why now"],
+    ['.footer__links a[href="#model"]', "Business model"],
     ['.footer__links a[href="#roadmap"]', "Roadmap"],
     ['.footer__links a[href="#faq"]', "FAQ"],
     ['.footer__links a[href="#join"]', "Sign up"],
-    [".footer__links li:nth-child(5) span", "Company info (coming soon)"],
-    [".footer__links li:nth-child(6) span", "Legal notice under the Act on Specified Commercial Transactions (coming soon)"],
-    [".footer__links li:nth-child(7) span", "Privacy policy (coming soon)"],
+    [".footer__links li:nth-child(7) span", "Company info (coming soon)"],
+    [".footer__links li:nth-child(8) span", "Legal notice under the Act on Specified Commercial Transactions (coming soon)"],
+    [".footer__links li:nth-child(9) span", "Privacy policy (coming soon)"],
     [".footer__bottom", "© Jinsei Koubo · Concept demo site"],
     ["#toTop", "Back to top", "aria-label"],
   ];
+  /* data-i18n の付いた要素：日本語はHTMLのまま、英語はこの辞書から差し替える */
+  const I18N_KEYS = {
+    "why.title": "Why Jinsei Koubo, and why now",
+    "why.lead": "Visitors to Japan have hit a record high, and the government has set clear targets for next-generation energy.<br class=\"pc\"> Jinsei Koubo is built where these two currents meet.",
+    "why.s1.l": "Visitors to Japan in 2025",
+    "why.s1.v": "42.68<small>million</small>",
+    "why.s1.n": "A record high, up 15.8% from 36.87 million in 2024",
+    "why.s1.s": "Source: JNTO estimate, as reported",
+    "why.s2.l": "Visitor spending in 2025",
+    "why.s2.v": "¥9.46<small>trillion</small>",
+    "why.s2.n": "A record high, ¥229,000 per person (preliminary)",
+    "why.s2.s": "Source: Japan Tourism Agency preliminary figures, as reported",
+    "why.s3.l": "Target for perovskite solar cells",
+    "why.s3.v": "20<small>GW</small>",
+    "why.s3.n": "About 20 GW by 2040 <span class=\"keep\">(Japan's 7th Strategic Energy Plan)</span>",
+    "why.s3.s": "Source: NEDO news release",
+    "why.s4.l": "Japan's goal for fusion energy",
+    "why.s4.v": "2030<small>s</small>",
+    "why.s4.n": "Demonstrate power generation (Fusion Energy Innovation Strategy, revised June 2025)",
+    "why.s4.s": "Source: Cabinet Office materials",
+    "why.role": "We want to turn the curiosity sparked on a trip into learning, buying and backing research.<br class=\"pc\"> That is the role Jinsei Koubo aims to play.",
+    "tour.it.0": "<b>Meet at Uji Station</b><p>Meet your English-speaking guide and go over the day.</p>",
+    "tour.it.1": "<b>Walk the tea fields</b><p>A tea master shows you fields grown under shade covers.</p>",
+    "tour.it.2": "<b>Hand-roll tea leaves</b><p>Roll and dry steamed tea leaves by hand.</p>",
+    "tour.it.3": "<b>Lunch</b><p>Enjoy local dishes such as green-tea soba.</p>",
+    "tour.it.4": "<b>Tea gathering</b><p>Learn to brew, then taste the tea you rolled yourself.</p>",
+    "tour.it.5": "<b>Wrap-up</b><p>Keep going with online courses and the market.</p>",
+    "tour.it.title": "Sample itinerary: a day with a tea master in Uji, Kyoto",
+    "tour.it.note": "* A sample itinerary at the concept stage. Times and activities may change.",
+    "mk.safe.0": "<b>Identity checks</b><p>Only verified users can list items.</p>",
+    "mk.safe.1": "<b>Payment held safely</b><p>We hold the payment until the buyer confirms delivery.</p>",
+    "mk.safe.2": "<b>Ratings after each trade</b><p>Buyers and sellers rate each other to help future traders.</p>",
+    "mk.safe.3": "<b>Anonymous shipping</b><p>Ship and receive without sharing your name or address.</p>",
+    "mk.safe.title": "How we keep trading safe (planned)",
+    "mk.safe.note": "* Features such as holding payments will be designed after confirming compliance with Japan's payment-services laws.",
+    "fund.learn.title": "Learn about the research",
+    "fund.learn.pv.h": "What are perovskite solar cells?",
+    "fund.learn.pv.p": "Solar cells made from materials with a “perovskite” crystal structure. Because they can be printed or coated, they are thin, light and flexible, and could go on walls and windows where panels never fit before. Long-term durability remains the biggest challenge.",
+    "fund.learn.pv.g": "National target: about 20 GW installed by 2040",
+    "fund.learn.fu.h": "What is fusion energy?",
+    "fund.learn.fu.p": "A technology that fuses light atomic nuclei and captures the energy released. It works on the same principle that makes the Sun shine, and it emits no carbon dioxide when generating power. Keeping extremely hot plasma stable and confined is one of the key challenges.",
+    "fund.learn.fu.g": "National goal: demonstrate power generation in the 2030s",
+    "fund.types.title": "Three ways to back research",
+    "fund.types.head": "<tr><th scope=\"col\">Type</th><th scope=\"col\">What backers receive</th><th scope=\"col\">Our approach</th></tr>",
+    "fund.types.body": "<tr><th scope=\"row\">Donation</th><td>Progress reports (no money or goods in return)</td><td>For people who simply want to support the research</td></tr><tr><th scope=\"row\">Reward</th><td>Experiences or items, such as lab tours or products using the results</td><td>Being considered as the easiest way to start</td></tr><tr><th scope=\"row\">Investment</th><td>Financial returns based on results</td><td>Only after the required registrations and framework are in place</td></tr>",
+    "model.title": "How the business works (draft)",
+    "model.lead": "Each of the seven services earns revenue in its own way, and they send customers to one another.<br class=\"pc\"> Not relying on any single service is meant to keep the whole business stable.",
+    "model.head": "<tr><th scope=\"col\">Service</th><th scope=\"col\">Main revenue</th><th scope=\"col\">How it feeds the others</th></tr>",
+    "model.body": "<tr><th scope=\"row\"><span class=\"mark\">旅</span>Inbound Tours</th><td>Tour fees</td><td>Guide guests to courses and the market</td></tr><tr><th scope=\"row\"><span class=\"mark\">遊</span>Metaverse Workshop</th><td>Paid events, digital goods</td><td>From 3D displays to purchases</td></tr><tr><th scope=\"row\"><span class=\"mark\">学</span>Academy</th><td>Course fees</td><td>Graduates share their work on the Channel</td></tr><tr><th scope=\"row\"><span class=\"mark\">発</span>Koubo Channel</th><td>Ads, a share of fan tips</td><td>From videos to courses and tours</td></tr><tr><th scope=\"row\"><span class=\"mark\">観</span>Koubo Theater</th><td>Monthly subscription</td><td>Films introduce research and artisans, leading to support</td></tr><tr><th scope=\"row\"><span class=\"mark\">市</span>Koubo Market</th><td>Transaction fees</td><td>Part of sales to the research fund (under consideration)</td></tr><tr><th scope=\"row\"><span class=\"mark\">研</span>Future Research Fund</th><td>Management fee (draft)</td><td>Lab tours for backers</td></tr>",
+    "model.note": "* A concept-stage draft. Fee rates and prices have not been decided.",
+    "__footer_why": "Why now",
+    "__footer_model": "Business model"
+  };
+  const keyEls = $$("[data-i18n]");
+  const keyJa = new Map(keyEls.map((el) => [el, el.innerHTML]));
+  keyEls.forEach((el) => { if (!(el.dataset.i18n in I18N_KEYS)) console.warn("i18n: missing key", el.dataset.i18n); });
+
   // 日本語の元の状態を記憶しておく（日本語に戻すときに使う）
   const I18N_JA = I18N_STATIC.map(([sel, , attr]) => {
     const el = $(sel);
@@ -753,6 +812,7 @@
       const v = lang === "en" ? en : I18N_JA[i];
       if (attr) el.setAttribute(attr, v); else el.innerHTML = v;
     });
+    keyEls.forEach((el) => { el.innerHTML = lang === "en" ? I18N_KEYS[el.dataset.i18n] : keyJa.get(el); });
     document.documentElement.lang = lang;
     document.title = TITLE[lang];
     const btn = $("#langToggle");

@@ -821,3 +821,73 @@ h1, h2, h3 { line-height: 1.4; }                    /* line-height-140 */
 .stars { color: var(--star); }
 .watch-count b { color: var(--error); }
 .fund__risk b[data-r="高"] { background: #ce0000; }
+
+/* =========================================================
+   追加コンテンツ（なぜ今／行程／安心のしくみ／用語解説／収益のしくみ）
+   ========================================================= */
+.sub-title { font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1.4; letter-spacing: .04em; margin-bottom: 20px; }
+.note { margin-top: 14px; font-size: 14px; color: var(--text-sub); }
+
+/* ---------- なぜ、いま：公的データ ---------- */
+.stat-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 600px) { .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1080px) { .stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.stat { display: flex; flex-direction: column; gap: 6px; padding: 24px 20px; background: var(--surface); border-radius: var(--shape-md); min-width: 0; }
+.stat__label { font-size: 14px; font-weight: 700; color: var(--text-sub); }
+.stat__num { font-family: var(--font); font-weight: 900; font-size: clamp(40px, 6vw, 48px); line-height: 1.1; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.stat__num small { font-size: 18px; font-weight: 700; margin-left: 4px; letter-spacing: 0; }
+.stat__note { font-size: 14px; line-height: 1.6; }
+.stat__src { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line); font-size: 12px; color: var(--text-sub); line-height: 1.5; }
+.stat__src a { color: var(--text); font-weight: 700; text-decoration: none; padding: 2px 4px; }
+.stat__src a:hover { text-decoration: underline; }
+.why__role { margin-top: 40px; font-family: var(--font-display); font-weight: 700; font-size: clamp(18px, 2.4vw, 22px); line-height: 1.75; border-left: 3px solid var(--shu); padding-left: 16px; }
+
+/* ---------- ツアーのモデル行程（タイムライン） ---------- */
+.itinerary { margin-top: 56px; padding: 32px 24px; background: var(--surface); border-radius: var(--shape-lg); }
+@media (min-width: 768px) { .itinerary { padding: 40px; } }
+.timeline { position: relative; display: grid; gap: 0; }
+.timeline li { position: relative; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; padding-bottom: 22px; }
+.timeline li::before { content: ""; position: absolute; left: 75px; top: 10px; bottom: -6px; width: 1px; background: var(--line); }
+.timeline li:last-child::before { display: none; }
+.timeline li::after { content: ""; position: absolute; left: 70px; top: 6px; width: 11px; height: 11px; border-radius: 50%; background: var(--surface); border: 2px solid var(--c-tour); }
+.timeline time { font-family: var(--font); font-weight: 900; font-variant-numeric: tabular-nums; font-size: 16px; line-height: 1.5; }
+.timeline div { padding-left: 20px; min-width: 0; }
+.timeline b { display: block; font-size: 16px; }
+.timeline p { font-size: 14px; color: var(--text-sub); }
+@media (min-width: 900px) {
+  .timeline { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
+  .timeline li { grid-template-columns: 1fr; gap: 8px; padding: 22px 0 0; border-top: 2px solid var(--line); }
+  .timeline li::before { display: none; }
+  .timeline li::after { left: 0; top: -7px; }
+  .timeline div { padding-left: 0; }
+}
+
+/* ---------- マーケットの安心のしくみ ---------- */
+.safety { margin-top: 56px; }
+.feature-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 600px) { .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1080px) { .feature-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.feature { padding: 20px; border-radius: var(--shape-md); background: var(--surface); border-top: 3px solid var(--c-market); min-width: 0; }
+.feature b { display: block; font-size: 17px; margin-bottom: 6px; }
+.feature p { font-size: 14px; color: var(--text-sub); }
+
+/* ---------- 研究テーマの解説 ---------- */
+.learn { margin-top: 56px; }
+.learn-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 48px; }
+@media (min-width: 900px) { .learn-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.learn-card { display: flex; flex-direction: column; gap: 10px; padding: 28px 24px; background: var(--surface); border-radius: var(--shape-lg); min-width: 0; }
+.learn-card__en { font-family: var(--font-mono); font-size: 12px; letter-spacing: .18em; color: var(--c-fund); font-weight: 600; }
+.learn-card h4 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 22px; line-height: 1.4; font-feature-settings: "palt"; }
+.learn-card > p:not([class]) { font-size: 16px; line-height: 1.75; }
+.learn-card__policy { margin-top: auto; padding: 12px 14px; border-radius: var(--shape-sm); background: var(--bg-alt); font-size: 14px; font-weight: 700; }
+.learn-card__policy a { color: var(--text); white-space: nowrap; margin-left: 4px; }
+
+/* ---------- 表（横にはみ出すときは表の中だけスクロール） ---------- */
+.table-wrap { overflow-x: auto; border-radius: var(--shape-md); background: var(--surface); }
+.data-table { width: 100%; min-width: 640px; border-collapse: collapse; font-size: 15px; line-height: 1.6; }
+.data-table th, .data-table td { padding: 14px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+.data-table thead th { font-size: 14px; color: var(--text-sub); font-weight: 700; background: var(--bg-alt); }
+.data-table tbody th { font-weight: 700; white-space: nowrap; }
+.data-table tbody tr:last-child > * { border-bottom: 0; }
+.data-table .mark { display: inline-grid; place-items: center; width: 28px; height: 28px; margin-right: 10px; border-radius: var(--shape-xs); background: var(--ink); color: var(--ink-text); font-family: var(--font-display); font-weight: 800; font-size: 15px; vertical-align: middle; }
+.keep { display: inline-block; }
