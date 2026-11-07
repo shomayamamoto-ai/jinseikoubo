@@ -308,7 +308,7 @@ button { cursor: pointer; }
 @media (min-width: 1000px) {
   .hero__inner {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    grid-template-areas: "eyebrow ring lead" "cta cta cta" "stats stats stats";
+    grid-template-areas: "eyebrow ring lead" "cta cta cta";
     align-items: center; padding-top: 72px; padding-bottom: 88px; column-gap: 48px;
   }
   .hero__eyebrow { grid-area: eyebrow; justify-self: end; writing-mode: vertical-rl; font-size: 17px; letter-spacing: .3em; height: 440px; text-align: start; }
@@ -317,7 +317,6 @@ button { cursor: pointer; }
   .hero__lead { grid-area: lead; justify-self: start; writing-mode: vertical-rl; height: 440px; text-align: start; line-height: 2.2; letter-spacing: .08em; font-size: 15px; }
   .hero__lead br { display: none; }
   .hero__cta { grid-area: cta; }
-  .hero__stats { grid-area: stats; justify-self: center; }
 }
 :root[lang="en"] .hero__eyebrow, :root[lang="en"] .hero__lead { writing-mode: horizontal-tb; height: auto; }
 :root[lang="en"] .hero__lead { max-width: 22em; line-height: 1.9; letter-spacing: 0; }
@@ -891,3 +890,6 @@ h1, h2, h3 { line-height: 1.4; }                    /* line-height-140 */
 .data-table tbody tr:last-child > * { border-bottom: 0; }
 .data-table .mark { display: inline-grid; place-items: center; width: 28px; height: 28px; margin-right: 10px; border-radius: var(--shape-xs); background: var(--ink); color: var(--ink-text); font-family: var(--font-display); font-weight: 800; font-size: 15px; vertical-align: middle; }
 .keep { display: inline-block; }
+
+/* 縦書きの中の数字を、立てて表示する（縦中横） */
+.tcy { text-combine-upright: all; -webkit-text-combine: horizontal; }

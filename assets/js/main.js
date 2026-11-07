@@ -592,10 +592,6 @@
     [".hero__lead", "Tours of Japan, a metaverse, online courses, videos, streaming, a marketplace and research funding. Jinsei Koubo, or “Life Workshop,” connects these seven services through one account."],
     ['.hero__cta a[href="#services"]', "Explore 7 services"],
     ['.hero__cta a[href="#fund"]', "See research projects"],
-    [".hero__stats", "Planned scale (targets)", "aria-label"],
-    [".hero__stats li:nth-child(1) span", "Services"],
-    [".hero__stats li:nth-child(2) span", "Shared account"],
-    [".hero__stats li:nth-child(3) span", "Minimum support"],
 
     ["#services .section__title", "Seven workshops"],
     ["#services .section__lead", "Start anywhere and everything connects. Meet an artisan on a tour, take their course, buy their work in the market, and part of the sales goes to future research."],
