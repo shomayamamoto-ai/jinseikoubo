@@ -195,6 +195,14 @@
     { id: 8, kind: "buy", emoji: "🪆", bg: "linear-gradient(135deg,#f4a261,#e76f51)", title: "メタバース工房 限定アバター衣装（デジタル）", seller: "koubo_official", price: 1200, end: now + 400 * H },
   ];
   let mFilter = "all";
+  // お気に入りは、この端末のブラウザにだけ保存（使えない環境では保存しない）
+  const WATCH_KEY = "jinseikoubo-watch";
+  let watched = new Set();
+  try { watched = new Set(JSON.parse(localStorage.getItem(WATCH_KEY) || "[]")); } catch (_) { /* 保存不可の環境 */ }
+  const saveWatch = () => {
+    try { localStorage.setItem(WATCH_KEY, JSON.stringify([...watched])); } catch (_) { /* 保存不可の環境 */ }
+    $("#watchCount").textContent = watched.size;
+  };
   const remain = (end) => {
     const ms = end - Date.now();
     if (ms <= 0) return "終了";
@@ -208,15 +216,16 @@
       .filter((i) => mFilter === "all" || i.kind === mFilter)
       .sort((a, b) => sort === "low" ? a.price - b.price : sort === "high" ? b.price - a.price : a.end - b.end);
     $("#marketList").innerHTML = list.map((i) => `
-      <article class="card reveal is-in">
-        <div class="card__thumb" style="--thumb:${i.bg}"><span aria-hidden="true">${i.emoji}</span></div>
+      <article class="card">
+        <div class="card__thumb" style="--thumb:${i.bg}"><span aria-hidden="true">${i.emoji}</span>
+          <button class="watch" type="button" data-watch="${i.id}" aria-pressed="${watched.has(i.id)}" aria-label="「${esc(i.title)}」をお気に入りに${watched.has(i.id) ? "登録済み" : "追加"}">${watched.has(i.id) ? "♥" : "♡"}</button></div>
         <div class="card__body">
           <p class="${i.kind === "auction" ? "tag-auction" : "tag-buy"}">${i.kind === "auction" ? "オークション" : "即決価格"}</p>
           <h3 class="card__title">${esc(i.title)}</h3>
           <p class="card__meta"><span>出品者：${esc(i.seller)}</span></p>
           <p class="price" data-price="${i.id}">${yen(i.price)}</p>
           ${i.kind === "auction"
-            ? `<p class="bids">入札 <span data-bids="${i.id}">${i.bids}</span>件・<span class="ends" data-end="${i.id}">${remain(i.end)}</span></p>`
+            ? `<p class="bids">入札 <span data-bids="${i.id}">${i.bids}</span>件・<span class="ends${i.end - Date.now() < H ? " is-soon" : ""}" data-end="${i.id}">${remain(i.end)}</span></p>`
             : `<p class="bids">送料込み・匿名配送対応</p>`}
           <div class="card__foot">
             ${i.kind === "auction"
@@ -234,6 +243,15 @@
   }));
   $("#marketSort").addEventListener("change", renderMarket);
   $("#marketList").addEventListener("click", (e) => {
+    const w = e.target.closest("[data-watch]");
+    if (w) {
+      const id = Number(w.dataset.watch);
+      if (watched.has(id)) { watched.delete(id); toast("お気に入りから外しました"); }
+      else { watched.add(id); toast("お気に入りに追加しました"); }
+      saveWatch();
+      renderMarket();
+      return;
+    }
     const b = e.target.closest("[data-bid]");
     if (!b) return;
     const item = items.find((i) => i.id === Number(b.dataset.bid));
@@ -244,7 +262,10 @@
     toast(`${yen(item.price)} で入札しました（デモ・保存されません）`);
   });
   setInterval(() => {
-    items.forEach((i) => { const el = $(`[data-end="${i.id}"]`); if (el) el.textContent = remain(i.end); });
+    items.forEach((i) => {
+      const el = $(`[data-end="${i.id}"]`);
+      if (el) { el.textContent = remain(i.end); el.classList.toggle("is-soon", i.end - Date.now() < H && i.end > Date.now()); }
+    });
   }, 1000);
 
   /* =======================================================
@@ -267,7 +288,7 @@
         <div class="fund__body">
           <p class="fund__text">${esc(p.text)}</p>
           <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="達成率">
-            <div class="progress__bar" data-w="${pct}"></div>
+            <div class="progress__bar" style="width:${pct}%"></div>
           </div>
           <div class="fund__nums">
             <div><strong>${pct}%</strong><span>達成率</span></div>
@@ -275,7 +296,7 @@
             <div><strong>${p.days}日</strong><span>残り</span></div>
           </div>
           <p class="card__meta"><span>集まった金額 ${yen(p.raised)}</span><span>目標 ${yen(p.goal)}</span></p>
-          <p class="fund__risk">リスク区分 <b>${p.risk}</b></p>
+          <p class="fund__risk">リスク区分 <b data-r="${p.risk}">${p.risk}</b></p>
           <a class="btn btn--primary btn--sm" href="#simProject" data-pick="${p.id}">1口 ${yen(UNIT)} から支援</a>
         </div>
       </article>`;
@@ -285,13 +306,18 @@
   const simUnits = $("#simUnits");
   simProject.innerHTML = projects.map((p) => `<option value="${p.id}">${esc(p.title)}</option>`).join("");
   const updateSim = () => {
+    const p = projects.find((x) => x.id === simProject.value) || projects[0];
+    const amount = Number(simUnits.value) * UNIT;
     $("#simUnitsOut").textContent = simUnits.value;
-    $("#simTotal").textContent = yen(Number(simUnits.value) * UNIT);
+    $("#simTotal").textContent = yen(amount);
+    $("#simShare").textContent = ((amount / p.goal) * 100).toFixed(2) + "%";
+    $("#simRemain").textContent = yen(Math.max(0, p.goal - p.raised - amount));
   };
+  simProject.addEventListener("change", updateSim);
   simUnits.addEventListener("input", updateSim);
   $("#fundList").addEventListener("click", (e) => {
     const a = e.target.closest("[data-pick]");
-    if (a) { simProject.value = a.dataset.pick; }
+    if (a) { simProject.value = a.dataset.pick; updateSim(); }
   });
   updateSim();
 
@@ -300,7 +326,11 @@
      ======================================================= */
   const canvas = $("#metaCanvas");
   const ctx = canvas.getContext("2d");
-  const W = canvas.width, Hh = canvas.height;
+  const W = 720, Hh = 420; // 論理サイズ（座標計算はこの大きさで行う）
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = W * dpr; canvas.height = Hh * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const visited = new Set();
   const zones = [
     { name: "ゲームアリーナ", desc: "謎解きやミニゲームで遊べるエリア。ランキング上位には工房コインをプレゼントする想定です。", x: 20, y: 20, w: 200, h: 130, color: "#e17055", icon: "🎮" },
     { name: "マーケット展示館", desc: "マーケットの出品物を3Dで手に取るように見られる展示エリアです。", x: W - 220, y: 20, w: 200, h: 130, color: "#0984e3", icon: "🏪" },
@@ -337,7 +367,7 @@
       roundRect(z.x, z.y, z.w, z.h, 14); ctx.fill(); ctx.stroke();
       ctx.font = "34px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(z.icon, z.x + z.w / 2, z.y + z.h / 2 - 12);
-      ctx.font = "bold 15px 'Noto Sans JP', sans-serif"; ctx.fillStyle = "#fff";
+      ctx.font = "bold 17px 'Zen Kaku Gothic New', sans-serif"; ctx.fillStyle = "#fff";
       ctx.fillText(z.name, z.x + z.w / 2, z.y + z.h / 2 + 26);
     });
     ctx.lineWidth = 1;
@@ -350,7 +380,7 @@
     });
     // 自分
     avatar(me.x, me.y + Math.sin(t / 200) * 1.5, me.r, "#ffffff", true);
-    ctx.font = "bold 12px 'Noto Sans JP', sans-serif"; ctx.fillStyle = "#fff"; ctx.textAlign = "center";
+    ctx.font = "bold 14px 'Zen Kaku Gothic New', sans-serif"; ctx.fillStyle = "#fff"; ctx.textAlign = "center";
     ctx.fillText("あなた", me.x, me.y - me.r - 10);
   };
   function avatar(x, y, r, c, outline) {
@@ -383,6 +413,11 @@
     const z = zones.find((z) => me.x > z.x && me.x < z.x + z.w && me.y > z.y && me.y < z.y + z.h) || null;
     if (z !== currentZone) {
       currentZone = z;
+      if (z && !visited.has(z.name)) {
+        visited.add(z.name);
+        $("#metaVisited").textContent = `${visited.size} / ${zones.length}`;
+        if (visited.size === zones.length) toast("全エリアを訪問しました！（デモ）");
+      }
       const info = z || plaza;
       $("#metaZone").textContent = info.name;
       $("#metaDesc").textContent = info.desc;
@@ -434,24 +469,36 @@
     input.value = "";
   });
 
-  /* ---------- スクロール時のふわっと表示 ---------- */
-  const io = "IntersectionObserver" in window ? new IntersectionObserver((entries) => {
+  /* ---------- スクロール時の表示アニメーション ----------
+     要素は最初から見えている状態。画面に入ったときに軽く動かすだけ。 */
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const io = !reduce && "IntersectionObserver" in window ? new IntersectionObserver((entries) => {
     entries.forEach((en) => {
       if (!en.isIntersecting) return;
-      en.target.classList.add("is-in");
-      $$(".progress__bar", en.target).forEach((b) => { b.style.width = b.dataset.w + "%"; });
+      en.target.classList.add("is-anim");
       io.unobserve(en.target);
     });
-  }, { threshold: 0.12 }) : null;
+  }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }) : null;
   function observeReveal() {
-    $$(".reveal:not(.is-in)").forEach((el) => io ? io.observe(el) : el.classList.add("is-in"));
-    if (!io) $$(".progress__bar").forEach((b) => { b.style.width = b.dataset.w + "%"; });
+    if (!io) return;
+    $$(".reveal:not(.is-anim):not(.is-seen)").forEach((el) => {
+      el.classList.add("is-seen");
+      // すでに画面内にあるものは動かさない（最初の表示をそのまま見せる）
+      if (el.getBoundingClientRect().top < window.innerHeight) return;
+      io.observe(el);
+    });
   }
   $$(".svc, .eco__item, .roadmap li, .flow li").forEach((el) => el.classList.add("reveal"));
+
+  /* ---------- ページ先頭へ戻るボタン ---------- */
+  const toTop = $("#toTop");
+  window.addEventListener("scroll", () => toTop.classList.toggle("is-show", window.scrollY > 800), { passive: true });
+  toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }));
 
   renderTours();
   renderCourses();
   renderVideos();
   renderMarket();
+  saveWatch();
   observeReveal();
 })();

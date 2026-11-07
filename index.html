@@ -2,12 +2,13 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="claude:viewport-fit-sides" content="cover">
   <title>人生工房 | 旅・学び・遊び・未来をつくる工房</title>
   <meta name="description" content="人生工房は、インバウンドツアー、メタバース、オンライン講座、動画発信、エンターテインメント、マーケット、研究支援をひとつにつなぐ総合プラットフォームです。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Shippori+Mincho:wght@600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -28,15 +29,15 @@
       </button>
       <nav class="nav" id="nav" aria-label="メインメニュー">
         <ul>
-          <li><a href="#tour">ツアー</a></li>
-          <li><a href="#metaverse">メタバース</a></li>
-          <li><a href="#academy">講座</a></li>
-          <li><a href="#channel">チャンネル</a></li>
-          <li><a href="#theater">シアター</a></li>
-          <li><a href="#market">マーケット</a></li>
-          <li><a href="#fund">研究支援</a></li>
+          <li><a href="#tour"><i aria-hidden="true">旅</i>ツアー</a></li>
+          <li><a href="#metaverse"><i aria-hidden="true">遊</i>メタバース</a></li>
+          <li><a href="#academy"><i aria-hidden="true">学</i>講座</a></li>
+          <li><a href="#channel"><i aria-hidden="true">発</i>チャンネル</a></li>
+          <li><a href="#theater"><i aria-hidden="true">観</i>シアター</a></li>
+          <li><a href="#market"><i aria-hidden="true">市</i>マーケット</a></li>
+          <li><a href="#fund"><i aria-hidden="true">研</i>研究支援</a></li>
         </ul>
-        <a class="btn btn--primary btn--sm" href="#join">無料で参加登録</a>
+        <a class="btn btn--accent btn--sm" href="#join">無料で事前登録</a>
       </nav>
     </div>
   </header>
@@ -46,15 +47,16 @@
     <section class="hero">
       <div class="hero__bg" aria-hidden="true"></div>
       <div class="container hero__inner">
-        <p class="hero__eyebrow">旅する。学ぶ。遊ぶ。つくる。未来を支える。</p>
-        <h1 class="hero__title">人生を、<br class="sp">自分の手で<br>つくる場所。</h1>
+        <p class="hero__eyebrow">旅する。学ぶ。遊ぶ。つくる。<br class="sp">未来を支える。</p>
+        <h1 class="hero__title">人生を、<br class="sp">自分の手で<br><em>つくる</em>場所。</h1>
         <p class="hero__lead">
           人生工房は、リアルな旅とデジタルの世界、<br class="pc">学びと遊び、そして未来の研究までを<br class="pc">ひとつのアカウントでつなぐ総合プラットフォームです。
         </p>
         <div class="hero__cta">
-          <a class="btn btn--primary" href="#services">7つのサービスを見る</a>
+          <a class="btn btn--accent" href="#services">7つのサービスを見る</a>
           <a class="btn btn--ghost" href="#fund">1万円から研究を支援</a>
         </div>
+        <ul class="hero__kanji" aria-hidden="true"><li>旅</li><li>遊</li><li>学</li><li>発</li><li>観</li><li>市</li><li>研</li></ul>
         <ul class="hero__stats" aria-label="構想中の規模（目標値）">
           <li><strong>7</strong><span>サービス</span></li>
           <li><strong>1</strong><span>共通アカウント</span></li>
@@ -74,13 +76,13 @@
           </p>
         </header>
         <ul class="svc-grid">
-          <li><a class="svc" href="#tour" style="--c:var(--c-tour)"><span class="svc__icon" aria-hidden="true">🗾</span><span class="svc__no">01</span><h3>インバウンドツアー</h3><p>職人・地域の暮らしに触れる、訪日客向けの体験型ツアー。</p></a></li>
-          <li><a class="svc" href="#metaverse" style="--c:var(--c-meta)"><span class="svc__icon" aria-hidden="true">🌐</span><span class="svc__no">02</span><h3>メタバース工房</h3><p>アバターで集い、遊び、つくる。仮想空間のゲームと交流の場。</p></a></li>
-          <li><a class="svc" href="#academy" style="--c:var(--c-academy)"><span class="svc__icon" aria-hidden="true">🎓</span><span class="svc__no">03</span><h3>アカデミー</h3><p>オンライン講座とライブワークショップで、技と知恵を学ぶ。</p></a></li>
-          <li><a class="svc" href="#channel" style="--c:var(--c-channel)"><span class="svc__icon" aria-hidden="true">📺</span><span class="svc__no">04</span><h3>工房チャンネル</h3><p>誰でも動画を投稿・発信できる、クリエイターの動画広場。</p></a></li>
-          <li><a class="svc" href="#theater" style="--c:var(--c-theater)"><span class="svc__icon" aria-hidden="true">🎬</span><span class="svc__no">05</span><h3>工房シアター</h3><p>オリジナル作品を見放題で楽しめる、定額制の映像配信。</p></a></li>
-          <li><a class="svc" href="#market" style="--c:var(--c-market)"><span class="svc__icon" aria-hidden="true">🛍️</span><span class="svc__no">06</span><h3>工房マーケット</h3><p>個人どうしで売り買いできる、オークション＆フリマ。</p></a></li>
-          <li class="svc-grid__wide"><a class="svc svc--feature" href="#fund" style="--c:var(--c-fund)"><span class="svc__icon" aria-hidden="true">⚛️</span><span class="svc__no">07</span><h3>未来研究ファンド</h3><p>ペロブスカイト太陽電池やフュージョンエネルギーなどの研究を、<br class="pc">1口1万円程度から個人が支援できる仕組み。</p></a></li>
+          <li><a class="svc" href="#tour" style="--c:var(--c-tour)"><span class="svc__mark" aria-hidden="true">旅</span><h3>インバウンドツアー</h3><p>職人・地域の暮らしに触れる、訪日客向けの体験型ツアー。</p></a></li>
+          <li><a class="svc" href="#metaverse" style="--c:var(--c-meta)"><span class="svc__mark" aria-hidden="true">遊</span><h3>メタバース工房</h3><p>アバターで集い、遊び、つくる。仮想空間のゲームと交流の場。</p></a></li>
+          <li><a class="svc" href="#academy" style="--c:var(--c-academy)"><span class="svc__mark" aria-hidden="true">学</span><h3>アカデミー</h3><p>オンライン講座とライブワークショップで、技と知恵を学ぶ。</p></a></li>
+          <li><a class="svc" href="#channel" style="--c:var(--c-channel)"><span class="svc__mark" aria-hidden="true">発</span><h3>工房チャンネル</h3><p>誰でも動画を投稿・発信できる、クリエイターの動画広場。</p></a></li>
+          <li><a class="svc" href="#theater" style="--c:var(--c-theater)"><span class="svc__mark" aria-hidden="true">観</span><h3>工房シアター</h3><p>オリジナル作品を見放題で楽しめる、定額制の映像配信。</p></a></li>
+          <li><a class="svc" href="#market" style="--c:var(--c-market)"><span class="svc__mark" aria-hidden="true">市</span><h3>工房マーケット</h3><p>個人どうしで売り買いできる、オークション＆フリマ。</p></a></li>
+          <li class="svc-grid__wide"><a class="svc svc--feature" href="#fund" style="--c:var(--c-fund)"><span class="svc__mark" aria-hidden="true">研</span><h3>未来研究ファンド</h3><p>ペロブスカイト太陽電池やフュージョンエネルギーなどの研究を、<br class="pc">1口1万円程度から個人が支援できる仕組み。</p></a></li>
         </ul>
       </div>
     </section>
@@ -89,7 +91,7 @@
     <section class="section section--tint" id="tour" style="--c:var(--c-tour)">
       <div class="container">
         <header class="section__head section__head--left">
-          <p class="section__en"><span class="badge">01</span>INBOUND TOUR</p>
+          <p class="section__en"><span class="badge" aria-hidden="true">旅</span>INBOUND TOUR</p>
           <h2 class="section__title">日本の「つくる」に会いにいく旅</h2>
           <p class="section__lead">
             観光地をめぐるだけではなく、職人の工房や地域の暮らしに入り込む、<br class="pc">体験型のツアーを訪日客向けに企画します。英語・中国語などの多言語ガイド付きを想定しています。
@@ -109,7 +111,7 @@
     <section class="section section--dark" id="metaverse" style="--c:var(--c-meta)">
       <div class="container">
         <header class="section__head section__head--left">
-          <p class="section__en"><span class="badge">02</span>METAVERSE</p>
+          <p class="section__en"><span class="badge" aria-hidden="true">遊</span>METAVERSE</p>
           <h2 class="section__title">メタバース工房で、遊びながらつながる</h2>
           <p class="section__lead">
             仮想空間の「工房街」をアバターで歩き、ゲームやイベントに参加できます。<br class="pc">下のミニデモでは、矢印キー、または画面をクリック・タップした場所へアバターが歩きます。各エリアに入ってみてください。
@@ -128,12 +130,13 @@
           <aside class="meta__info">
             <p class="meta__label">現在地</p>
             <p class="meta__zone" id="metaZone" aria-live="polite">工房広場</p>
+            <p class="meta__visited">訪れたエリア <b id="metaVisited">0 / 4</b></p>
             <p class="meta__desc" id="metaDesc">中央の広場です。4つのエリアに歩いていくと、それぞれの説明が表示されます。</p>
             <ul class="meta__features">
-              <li>🎮 ミニゲーム・謎解きイベント</li>
-              <li>🧑‍🤝‍🧑 ツアー参加者や講師との交流会</li>
-              <li>🏪 マーケット商品の3D展示</li>
-              <li>🎫 シアター作品の同時視聴ルーム</li>
+              <li>ミニゲーム・謎解きイベント</li>
+              <li>ツアー参加者や講師との交流会</li>
+              <li>マーケット商品の3D展示</li>
+              <li>シアター作品の同時視聴ルーム</li>
             </ul>
           </aside>
         </div>
@@ -144,7 +147,7 @@
     <section class="section" id="academy" style="--c:var(--c-academy)">
       <div class="container">
         <header class="section__head section__head--left">
-          <p class="section__en"><span class="badge">03</span>ACADEMY</p>
+          <p class="section__en"><span class="badge" aria-hidden="true">学</span>ACADEMY</p>
           <h2 class="section__title">オンライン講座・ワークショップ</h2>
           <p class="section__lead">
             録画の講座でいつでも学べるほか、講師とリアルタイムでつながる<br class="pc">ライブワークショップも開催します。修了するとデジタル修了証を発行する想定です。
@@ -163,7 +166,7 @@
     <section class="section section--tint" id="channel" style="--c:var(--c-channel)">
       <div class="container">
         <header class="section__head section__head--left">
-          <p class="section__en"><span class="badge">04</span>CHANNEL</p>
+          <p class="section__en"><span class="badge" aria-hidden="true">発</span>CHANNEL</p>
           <h2 class="section__title">工房チャンネル ― 誰もが発信者に</h2>
           <p class="section__lead">
             職人の手仕事、旅の記録、研究者の解説など、だれでも動画を投稿できます。<br class="pc">広告収益やファンからの応援（投げ銭）で、発信者に収益が届く仕組みを想定しています。
@@ -183,7 +186,7 @@
     <section class="section section--theater" id="theater" style="--c:var(--c-theater)">
       <div class="container">
         <header class="section__head section__head--left">
-          <p class="section__en"><span class="badge">05</span>THEATER</p>
+          <p class="section__en"><span class="badge" aria-hidden="true">観</span>THEATER</p>
           <h2 class="section__title">工房シアター ― 見放題のオリジナル作品</h2>
           <p class="section__lead">
             ドキュメンタリー、ドラマ、アニメなどのオリジナル作品を、<br class="pc">月額定額で見放題にする配信サービスです。
@@ -208,7 +211,7 @@
     <section class="section" id="market" style="--c:var(--c-market)">
       <div class="container">
         <header class="section__head section__head--left">
-          <p class="section__en"><span class="badge">06</span>MARKET</p>
+          <p class="section__en"><span class="badge" aria-hidden="true">市</span>MARKET</p>
           <h2 class="section__title">工房マーケット ― 個人どうしで売り買い</h2>
           <p class="section__lead">
             作品、古道具、ツアーで出会った品などを、個人が出品できるマーケットです。<br class="pc">「即決購入」と「オークション入札」の2つの買い方を用意します。
@@ -220,6 +223,7 @@
             <button class="chip" data-mfilter="auction">オークション</button>
             <button class="chip" data-mfilter="buy">即決</button>
           </div>
+          <p class="watch-count">お気に入り <b id="watchCount">0</b>件</p>
           <label class="select">
             <span>並び替え</span>
             <select id="marketSort">
@@ -237,7 +241,7 @@
     <section class="section section--fund" id="fund" style="--c:var(--c-fund)">
       <div class="container">
         <header class="section__head section__head--left">
-          <p class="section__en"><span class="badge">07</span>FUTURE RESEARCH FUND</p>
+          <p class="section__en"><span class="badge" aria-hidden="true">研</span>FUTURE RESEARCH FUND</p>
           <h2 class="section__title">未来研究ファンド ―<br class="sp"> 1万円から、未来の研究を支える</h2>
           <p class="section__lead">
             これまで大企業や国が中心だった最先端研究に、個人が少額から参加できる仕組みです。<br class="pc">支援者は研究の進み具合をレポートや動画で受け取り、成果を一緒に見届けられます。
@@ -254,20 +258,26 @@
         <div class="fund-grid" id="fundList"></div>
 
         <div class="sim">
-          <h3 class="sim__title">支援シミュレーター</h3>
-          <p class="sim__note">口数を選ぶと、支援額の合計を確認できます（デモ用の計算です）。</p>
-          <div class="sim__body">
-            <label for="simProject">案件</label>
-            <select id="simProject"></select>
-            <label for="simUnits">口数：<output id="simUnitsOut">1</output>口</label>
-            <input type="range" id="simUnits" min="1" max="50" value="1">
-            <p class="sim__total">支援額 <strong id="simTotal">¥10,000</strong></p>
-            <button class="btn btn--primary" data-toast="デモのため申込はできません">この内容で支援する（デモ）</button>
+          <div>
+            <h3 class="sim__title">支援シミュレーター</h3>
+            <p class="sim__note">案件と口数を選ぶと、支援額の合計と、目標金額に占める割合を確認できます（デモ用の計算です）。</p>
+            <div class="sim__body">
+              <label for="simProject">案件</label>
+              <select id="simProject"></select>
+              <label for="simUnits">口数：<output id="simUnitsOut" for="simUnits">1</output>口（1口 ¥10,000）</label>
+              <input type="range" id="simUnits" min="1" max="50" value="1">
+            </div>
+          </div>
+          <div class="sim__out" aria-live="polite">
+            <p class="sim__total">支援額<strong id="simTotal">¥10,000</strong></p>
+            <p class="sim__share">目標金額に占める割合 <b id="simShare">0.03%</b></p>
+            <p class="sim__share">達成までの残り <b id="simRemain">¥0</b></p>
+            <button class="btn btn--primary btn--block" data-toast="デモのため申込はできません">この内容で支援する（デモ）</button>
           </div>
         </div>
 
         <div class="risk" role="note">
-          <h3>⚠ ご注意（構想段階の注記）</h3>
+          <h3>ご注意（構想段階の注記）</h3>
           <ul>
             <li>研究開発は成功が保証されたものではなく、支援したお金が戻らない可能性があります。</li>
             <li>金銭的なリターン（配当など）を伴う形で実施する場合、日本では金融商品取引法にもとづく登録などが必要になる可能性があります。正式サービス開始前に、専門家・関係当局への確認を前提としています。</li>
@@ -285,9 +295,17 @@
           <h2 class="section__title">ひとつのアカウントで、<br class="sp">すべてがつながる</h2>
         </header>
         <div class="eco">
-          <div class="eco__item"><strong>共通ポイント「工房コイン」</strong><p>ツアー参加や講座修了でたまり、マーケットやシアターで使える想定です。</p></div>
-          <div class="eco__item"><strong>体験が次の体験を呼ぶ</strong><p>ツアーで出会った職人の講座を受講し、作品をマーケットで購入する、といった流れをつくります。</p></div>
-          <div class="eco__item"><strong>売上の一部を未来へ</strong><p>各サービスの売上の一部を、研究ファンドの支援に回す仕組みを検討しています。</p></div>
+          <ol class="cycle" aria-label="人生工房の循環の例">
+            <li><b>旅</b><span>ツアーで<br>職人に出会う</span></li>
+            <li><b>学</b><span>その職人の<br>講座を受ける</span></li>
+            <li><b>市</b><span>作品を<br>マーケットで買う</span></li>
+            <li><b>研</b><span>売上の一部が<br>研究を支える</span></li>
+          </ol>
+          <div class="eco__list">
+            <div class="eco__item"><strong>共通ポイント「工房コイン」</strong><p>ツアー参加や講座修了でたまり、マーケットやシアターで使える想定です。</p></div>
+            <div class="eco__item"><strong>体験が次の体験を呼ぶ</strong><p>ひとつのサービスでの出会いが、ほかのサービスへの入口になるよう設計します。</p></div>
+            <div class="eco__item"><strong>売上の一部を未来へ</strong><p>各サービスの売上の一部を、研究ファンドの支援に回す仕組みを検討しています。</p></div>
+          </div>
         </div>
       </div>
     </section>
@@ -306,6 +324,23 @@
           <li><span class="roadmap__phase">PHASE 3</span><h3>集う</h3><p>メタバース工房（イベント・ゲーム・3D展示）</p></li>
           <li><span class="roadmap__phase">PHASE 4</span><h3>未来を支える</h3><p>未来研究ファンド（法的な体制が整い次第）</p></li>
         </ol>
+      </div>
+    </section>
+
+    <!-- ===== FAQ ===== -->
+    <section class="section" id="faq">
+      <div class="container container--narrow">
+        <header class="section__head">
+          <p class="section__en">FAQ</p>
+          <h2 class="section__title">よくある質問</h2>
+        </header>
+        <div class="faq">
+          <details><summary>今すぐ使えるサービスはありますか？</summary><p>現在は構想段階のため、まだ利用できるサービスはありません。下の事前登録で、サービス開始のお知らせを受け取れるようにする予定です。</p></details>
+          <details><summary>アカウントはサービスごとに必要ですか？</summary><p>ひとつの共通アカウントで、7つのサービスすべてを使えるようにする構想です。</p></details>
+          <details><summary>研究ファンドに1万円を出すと、お金は増えますか？</summary><p>増えるとは限りません。研究は失敗することもあり、支援したお金が戻らない可能性があります。リターンの形（成果報告、見学会、金銭的な分配など）は案件ごとに異なる想定で、金銭的な分配を行う場合は法令にもとづく体制を整えてから開始します。</p></details>
+          <details><summary>海外からツアーに申し込めますか？</summary><p>訪日客向けのサービスのため、英語などの多言語での申込・案内に対応する予定です。</p></details>
+          <details><summary>マーケットに出品するには何が必要ですか？</summary><p>共通アカウントと本人確認を行えば、個人でも出品できる仕組みを想定しています。出品できない品物のルールは、正式公開時にお知らせします。</p></details>
+        </div>
       </div>
     </section>
 
@@ -333,6 +368,7 @@
       <ul class="footer__links">
         <li><a href="#services">サービス一覧</a></li>
         <li><a href="#roadmap">ロードマップ</a></li>
+        <li><a href="#faq">よくある質問</a></li>
         <li><a href="#join">事前登録</a></li>
         <li><span>会社概要（準備中）</span></li>
         <li><span>特定商取引法に基づく表記（準備中）</span></li>
@@ -342,6 +378,7 @@
     <p class="footer__bottom">© 人生工房 ― 構想デモサイト</p>
   </footer>
 
+  <button class="to-top" id="toTop" type="button" aria-label="ページの先頭へ戻る">↑</button>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="assets/js/main.js"></script>
