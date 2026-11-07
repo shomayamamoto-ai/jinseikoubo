@@ -1083,3 +1083,24 @@ input[type="range"]::-moz-range-thumb { width: 28px; height: 28px; }
 
 /* 言語切り替え時の位置補正は JavaScript で行うため、ブラウザの自動補正（スクロールアンカリング）は止める */
 html { overflow-anchor: none; }
+
+
+/* =========================================================
+   ロゴ（SVG スプライトを currentColor で表示：ダークモードで自動的に白抜き）
+   ========================================================= */
+:root { --logo-sun: #c33e25; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --logo-sun: #e0715c; } }
+:root[data-theme="dark"] { --logo-sun: #e0715c; }
+.logo { gap: 10px; color: var(--text); }
+svg.logo__mark { width: 38px; height: 38px; background: none; border-radius: 0; flex-shrink: 0; }
+svg.logo__name { height: 21px; width: calc(21px * 4.0802); flex-shrink: 0; }
+.logo--footer { gap: 14px; }
+.logo--footer svg.logo__mark { width: 64px; height: 64px; }
+.logo__stack { display: grid; gap: 7px; }
+.logo--footer svg.logo__name { height: 40px; width: calc(40px * 4.0802); }
+svg.logo__roman { height: 7px; width: calc(40px * 4.0802); }
+@media (max-width: 380px) { svg.logo__name { height: 19px; width: calc(19px * 4.0802); } svg.logo__mark { width: 34px; height: 34px; } }
+.g-mark { width: 24px; height: 24px; color: #ebe9f3; --logo-sun: #e0715c; }
+
+/* 以前の「工」の四角ロゴ用の色指定を打ち消し、文字色で描く */
+svg.logo__mark { color: inherit; }

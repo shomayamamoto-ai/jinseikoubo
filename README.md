@@ -70,3 +70,20 @@ assets/js/main.js     … サンプルデータと動き
 | 状態の表示 | ホバー8%／フォーカス12%／押下12%の重ね色 | 同上（md-sys-state） |
 | 動き | cubic-bezier(.2,0,0,1) など、200／300／500ms | 同上（md-sys-motion） |
 | コントラスト | 全テキストが WCAG 2.2 AA（4.5:1、大きな文字は3:1）以上 | デジタル庁デザインシステムが準拠する基準 |
+
+## ロゴ
+
+`assets/logo/` にロゴ一式（SVG）があります。使い方のルールは `brand.html`（ロゴガイド）を見てください。
+
+| ファイル | 内容 |
+|---|---|
+| `mark.svg` | シンボルマーク（「工」と「人」をひとつにした印＋朱の丸） |
+| `logo-horizontal.svg` | 横組み（基本） |
+| `logo-stacked.svg` | 縦積み |
+| `logo-vertical.svg` | 縦書き |
+| `logotype.svg` | ネームロゴ単体 |
+| `app-icon.svg` | アプリアイコン |
+| `*-white.svg` | 暗い背景用の白抜き |
+| `_sprite.svg` | サイトに埋め込む形の定義（文字色に追従） |
+
+ネームロゴの字形は Shippori Mincho（SIL Open Font License 1.1）をもとに作成しています。
