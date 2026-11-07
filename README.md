@@ -43,3 +43,15 @@ assets/js/main.js     … サンプルデータと動き
 - 申込・決済・投資・メール登録は動作しません（送信も保存もしません）。
 - 研究ファンドを金銭的リターン付きで実施する場合は、金融商品取引法などの
   確認が必要になる可能性があるため、正式公開前に専門家への確認を前提としています。
+
+## Webサイトとして公開する（GitHub Pages）
+
+公開URL（設定後に有効）：https://shomayamamoto-ai.github.io/jinseikoubo/
+
+1. GitHubでこのリポジトリを開き、上部の **Settings** を押す
+2. 左メニューの **Pages** を押す
+3. 「Build and deployment」の **Source** で **Deploy from a branch** を選ぶ
+4. **Branch** で公開するブランチ（例：`claude/hopeful-bardeen-8n2kx8`）と `/ (root)` を選び、**Save** を押す
+5. 1〜2分待つと、上の公開URLで表示されます
+
+以後は、そのブランチに変更をプッシュするたびに、サイトが自動で更新されます。
