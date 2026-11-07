@@ -42,7 +42,7 @@
     demoBook: () => tr("予約はデモのため利用できません", "Booking is not available in this demo"),
     demoEnroll: () => tr("受講申込はデモのため利用できません", "Enrollment is not available in this demo"),
     demoPlay: () => tr("デモのため再生できません", "Playback is not available in this demo"),
-    demoBuy: () => tr("購入はデモのため利用できません", "Purchasing is not available in this demo"),
+    demoBuy: () => tr("カートはデモのため利用できません", "The cart is not available in this demo"),
   };
 
   /* ---------- ナビゲーション（スマホ用メニュー） ---------- */
@@ -93,7 +93,7 @@
             <div class="lang" aria-label="${tr("対応言語", "Guide languages")}">${t.lang.map((l) => `<span>${esc(l)}</span>`).join("")}</div>
             <div class="card__foot">
               <p class="price">${yen(t.price)}<small>${tr("／人〜", " / person")}</small></p>
-              <button class="btn btn--primary btn--sm" data-toast="${T.demoBook()}">${tr("予約する", "Book now")}</button>
+              <button class="btn btn--primary btn--sm" data-toast="${T.demoBook()}">${tr("空き日程を見る", "Check availability")}</button>
             </div>
           </div>
         </article>`; }).join("");
@@ -148,7 +148,7 @@
             <p class="stars" aria-label="${tr("評価", "Rating")} ${c.rate}">★ ${c.rate.toFixed(1)}</p>
             <div class="card__foot">
               <p class="price">${c.price === 0 ? tr("無料", "Free") : yen(c.price)}</p>
-              <button class="btn btn--primary btn--sm" data-toast="${T.demoEnroll()}">${c.type === "live" ? tr("参加する", "Join") : tr("受講する", "Enroll")}</button>
+              <button class="btn btn--primary btn--sm" data-toast="${T.demoEnroll()}">${c.type === "live" ? tr("参加を予約する", "Reserve a seat") : tr("講座の詳細を見る", "View course details")}</button>
             </div>
           </div>
         </article>`; }).join("");
@@ -300,7 +300,7 @@
           <div class="card__foot">
             ${i.kind === "auction"
               ? `<button class="btn btn--primary btn--sm btn--block" data-bid="${i.id}">${tr(`＋${yen(bidStep(i.price))} で入札（デモ）`, `Bid +${yen(bidStep(i.price))} (demo)`)}</button>`
-              : `<button class="btn btn--primary btn--sm btn--block" data-toast="${T.demoBuy()}">${tr("購入する", "Buy now")}</button>`}
+              : `<button class="btn btn--primary btn--sm btn--block" data-toast="${T.demoBuy()}">${tr("カートに入れる", "Add to cart")}</button>`}
           </div>
         </div>
       </article>`; }).join("");
@@ -375,7 +375,7 @@
           </div>
           <p class="card__meta"><span>${tr("集まった金額", "Raised")} ${yen(p.raised)}</span><span>${tr("目標", "Goal")} ${yen(p.goal)}</span></p>
           <p class="fund__risk">${tr("リスク区分", "Risk level")} <b data-r="${riskLabel[p.risk][0]}">${tr(...riskLabel[p.risk])}</b></p>
-          <a class="btn btn--primary btn--sm" href="#simProject" data-pick="${p.id}">${tr(`1口 ${yen(UNIT)} から支援`, `Back from ${yen(UNIT)} per unit`)}</a>
+          <a class="btn btn--primary btn--sm" href="#simProject" data-pick="${p.id}">${tr("この案件で支援額を試算する", "Estimate my backing")}</a>
         </div>
       </article>`;
     }).join("");
@@ -575,13 +575,13 @@
     ['#nav a[href="#theater"]', '<i aria-hidden="true">観</i>Theater'],
     ['#nav a[href="#market"]', '<i aria-hidden="true">市</i>Market'],
     ['#nav a[href="#fund"]', '<i aria-hidden="true">研</i>Research'],
-    ["#nav .btn", "Sign up free"],
+    ["#nav .btn", "Go to sign-up"],
 
     [".hero__eyebrow", "Travel. Learn. Play. Make.<br class=\"sp\"> Back the future."],
     [".hero__title", "A place to <em>craft</em><br>your own life."],
-    [".hero__lead", "Jinsei Koubo means “Life Workshop.” We connect real-world travel and digital spaces, learning and play, and even frontier research, all through a single account."],
+    [".hero__lead", "Tours of Japan, a metaverse, online courses, videos, streaming, a marketplace and research funding. Jinsei Koubo, or “Life Workshop,” connects these seven services through one account."],
     ['.hero__cta a[href="#services"]', "Explore 7 services"],
-    ['.hero__cta a[href="#fund"]', "Back research from ¥10,000"],
+    ['.hero__cta a[href="#fund"]', "See research projects"],
     [".hero__stats", "Planned scale (targets)", "aria-label"],
     [".hero__stats li:nth-child(1) span", "Services"],
     [".hero__stats li:nth-child(2) span", "Shared account"],
@@ -592,15 +592,15 @@
     ['.svc[href="#tour"] h3', "Inbound Tours"],
     ['.svc[href="#tour"] p', "Hands-on tours for visitors to Japan, inside artisan workshops and local life."],
     ['.svc[href="#metaverse"] h3', "Metaverse Workshop"],
-    ['.svc[href="#metaverse"] p', "Gather, play and create as an avatar in a shared virtual world."],
+    ['.svc[href="#metaverse"] p', "A virtual workshop town where your avatar joins mini-games and meetups."],
     ['.svc[href="#academy"] h3', "Academy"],
-    ['.svc[href="#academy"] p', "Learn skills and know-how through online courses and live workshops."],
+    ['.svc[href="#academy"] p', "Online courses in kintsugi, woodworking, sake and more, taught directly by artisans and researchers."],
     ['.svc[href="#channel"] h3', "Koubo Channel"],
-    ['.svc[href="#channel"] p', "A video space where anyone can post and share their work."],
+    ['.svc[href="#channel"] p', "A video service where anyone can post artisan craft, research explainers and more."],
     ['.svc[href="#theater"] h3', "Koubo Theater"],
-    ['.svc[href="#theater"] p', "A subscription service for unlimited original films and series."],
+    ['.svc[href="#theater"] p', "Original documentaries, dramas and anime, unlimited for one monthly fee."],
     ['.svc[href="#market"] h3', "Koubo Market"],
-    ['.svc[href="#market"] p', "Buy and sell person to person, by auction or fixed price."],
+    ['.svc[href="#market"] p', "Buy and sell crafts and vintage finds person to person, by auction or Buy It Now."],
     ['.svc[href="#fund"] h3', "Future Research Fund"],
     ['.svc[href="#fund"] p', "Back research such as perovskite solar cells and fusion energy,<br class=\"pc\"> starting from around ¥10,000 per unit."],
 
@@ -647,7 +647,7 @@
     [".theater__hero p:not(.theater__tag)", "A six-part series following researchers who have devoted their lives to next-generation solar cells, and the projects backed by our research fund."],
     [".theater__btns .btn--light", "▶ Play"],
     [".theater__btns .btn--light", "Playback is not available in this demo", "data-toast"],
-    [".theater__btns .btn--glass", "+ My List"],
+    [".theater__btns .btn--glass", "+ Add to My List"],
     [".theater__btns .btn--glass", "Added to My List (demo)", "data-toast"],
 
     ["#market .section__title", "Koubo Market: buy and sell person to person"],
@@ -676,7 +676,7 @@
     [".sim__total", 'Your total<strong id="simTotal">¥10,000</strong>'],
     [".sim__share:nth-of-type(2)", 'Share of the goal <b id="simShare">0.03%</b>'],
     [".sim__share:nth-of-type(3)", 'Remaining to reach the goal <b id="simRemain">¥0</b>'],
-    [".sim__out .btn", "Back this project (demo)"],
+    [".sim__out .btn", "Review my backing (demo)"],
     [".sim__out .btn", "Backing is not available in this demo", "data-toast"],
     [".risk h3", "Please note (concept stage)"],
     [".risk li:nth-child(1)", "Research and development is never guaranteed to succeed. You may not get your money back."],
@@ -715,7 +715,7 @@
     [".join__inner > p:not(.join__msg)", "Get launch news and early-access invitations."],
     ['label[for="joinEmail"]', "Email address"],
     ["#joinEmail", "Email address", "placeholder"],
-    [".join__form .btn", "Sign up"],
+    [".join__form .btn", "Sign up for launch news"],
 
     [".footer__copy", "Travel. Learn. Play. Make. Back the future."],
     ['.footer__links a[href="#services"]', "All services"],
