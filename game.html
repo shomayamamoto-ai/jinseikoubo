@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="claude:viewport-fit-sides" content="cover">
+  <title>工房クイズ | 人生工房 ゲームアリーナ</title>
+  <meta name="description" content="メタバース工房のゲームアリーナ。日本の工芸と未来の研究に関する5問のクイズです。">
+  <meta name="theme-color" content="#121019">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Shippori+Mincho:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* ゲームアリーナ：夜の工房街（常にダーク） */
+    :root { color-scheme: dark; }
+    body { background: #121019; color: #ebe9f3; }
+    body::before { background: #121019; }
+    .g-header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: rgba(18, 16, 25, .92); backdrop-filter: blur(10px); border-bottom: 1px solid #2b2650; }
+    .g-header .container { max-width: none; display: flex; align-items: center; gap: 12px; height: 64px; }
+    .g-back { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px 0 8px; border-radius: var(--shape-sm); color: #ebe9f3; text-decoration: none; font-weight: 700; font-size: 15px; }
+    .g-back:hover { background: rgba(255,255,255,.08); }
+    .g-title { margin-right: auto; font-family: var(--font-display); font-weight: 800; font-size: 17px; letter-spacing: .06em; }
+    .g-lang { min-height: 44px; padding: 0 12px; border-radius: var(--shape-sm); border: 1px solid #3a3470; background: transparent; color: #ebe9f3; font-size: 14px; font-weight: 700; }
+    .g-lang:hover { background: rgba(255,255,255,.08); }
+    .g-main { padding-block: 40px 72px; }
+    .g-wrap { max-width: 720px; margin: 0 auto; }
+    .g-eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .22em; color: #a9a3c6; }
+    .g-h1 { margin-top: 10px; font-family: var(--font-display); font-weight: 800; font-size: clamp(28px, 6vw, 40px); line-height: 1.35; }
+    .g-lead { margin-top: 12px; color: #c9c4e8; font-size: 16px; }
+    .g-card { margin-top: 28px; padding: 28px 22px; border-radius: var(--shape-lg); background: #1a1636; border: 1px solid #2b2650; }
+    @media (min-width: 768px) { .g-card { padding: 36px; } }
+    .g-meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 14px; color: #c9c4e8; }
+    .g-meta b { font-variant-numeric: tabular-nums; color: #ffd36b; }
+    .g-bar { margin-top: 10px; height: 6px; border-radius: 999px; background: #2b2650; overflow: hidden; }
+    .g-bar span { display: block; height: 100%; width: 0; background: #ffd36b; border-radius: 999px; transition: width var(--dur-medium) var(--ease-standard); }
+    .g-q { margin-top: 24px; font-size: clamp(19px, 3.6vw, 23px); font-weight: 700; line-height: 1.6; }
+    .g-choices { margin-top: 20px; display: grid; gap: 10px; }
+    .g-choice {
+      display: flex; align-items: center; gap: 14px; width: 100%; min-height: 56px; padding: 12px 16px; text-align: left;
+      border-radius: var(--shape-md); border: 1px solid #3a3470; background-color: #221d44; color: #fff; font-size: 16px; font-weight: 500;
+    }
+    .g-choice .k { flex-shrink: 0; width: 30px; height: 30px; display: grid; place-items: center; border-radius: var(--shape-xs); background: #3a3470; font-family: var(--font-mono); font-weight: 600; font-size: 14px; }
+    .g-choice:disabled { cursor: default; }
+    .g-choice.is-right { border-color: #5ce0a8; background-color: #173a2e; }
+    .g-choice.is-right .k { background: #5ce0a8; color: #0b2a1f; }
+    .g-choice.is-wrong { border-color: #ff8a80; background-color: #3d1a22; }
+    .g-choice.is-wrong .k { background: #ff8a80; color: #3a0d10; }
+    .g-feedback { margin-top: 18px; padding: 14px 16px; border-radius: var(--shape-md); background: #221d44; font-size: 15px; line-height: 1.75; }
+    .g-feedback b { display: block; margin-bottom: 4px; font-size: 16px; }
+    .g-actions { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .g-actions .btn { flex: 1 1 200px; }
+    .g-result { text-align: center; }
+    .g-score { margin-top: 8px; font-size: clamp(56px, 16vw, 88px); font-weight: 900; line-height: 1.1; font-variant-numeric: tabular-nums; color: #ffd36b; }
+    .g-score small { font-size: .35em; color: #ebe9f3; margin-left: 6px; }
+    .g-coin { margin-top: 10px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; background: #2b2650; font-weight: 700; }
+    .g-msg { margin-top: 16px; color: #c9c4e8; }
+    .g-note { margin-top: 20px; font-size: 14px; color: #a9a3c6; }
+    .btn--g { background: #ffd36b; color: #1a1405; }
+    .btn--gline { background: transparent; color: #ebe9f3; border: 1px solid #5a54a0; }
+    .btn--g::after, .btn--gline::after { display: none; }
+    .g-enter { animation: g-in var(--dur-long) var(--ease-emph-decel) both; }
+    @keyframes g-in { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .g-enter { animation: none; } }
+  </style>
+</head>
+<body>
+  <header class="g-header">
+    <div class="container">
+      <a class="g-back" href="./#metaverse" id="gBack"><span aria-hidden="true">←</span><span data-t="back">メタバースに戻る</span></a>
+      <p class="g-title" data-t="arena">ゲームアリーナ</p>
+      <button class="g-lang" id="gLang" type="button" aria-label="Switch to English">EN</button>
+    </div>
+  </header>
+
+  <main class="g-main" id="main">
+    <div class="container">
+      <div class="g-wrap g-enter">
+        <p class="g-eyebrow">GAME ARENA · KOUBO QUIZ</p>
+        <h1 class="g-h1" data-t="h1">工房クイズ</h1>
+        <p class="g-lead" data-t="lead">日本の工芸と、未来の研究についての5問です。全問正解をめざしてください。</p>
+        <div class="g-card" id="gCard" aria-live="polite"></div>
+        <p class="g-note" data-t="note">※構想段階のデモです。獲得した工房コインは保存されません。</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  (() => {
+    "use strict";
+    const $ = (s) => document.querySelector(s);
+    const LANG_KEY = "jinseikoubo-lang";
+    let lang = "ja";
+    try {
+      const saved = localStorage.getItem(LANG_KEY);
+      if (saved === "ja" || saved === "en") lang = saved;
+      else if (!(navigator.language || "ja").toLowerCase().startsWith("ja")) lang = "en";
+    } catch (_) { /* 保存不可の環境では日本語 */ }
+    const tr = (ja, en) => (lang === "en" ? en : ja);
+
+    const UI = {
+      back: ["メタバースに戻る", "Back to the Metaverse"],
+      arena: ["ゲームアリーナ", "Game Arena"],
+      h1: ["工房クイズ", "Koubo Quiz"],
+      lead: ["日本の工芸と、未来の研究についての5問です。全問正解をめざしてください。", "Five questions about Japanese crafts and future research. Can you get them all right?"],
+      note: ["※構想段階のデモです。獲得した工房コインは保存されません。", "* A concept-stage demo. Koubo Coins earned here are not saved."],
+    };
+
+    // 問題（答えは choices の 0 番目。表示時に並べ替える）
+    const QUIZ = [
+      { q: ["割れた器を漆でつなぎ、金などで仕上げる日本の修理技法は？", "Which Japanese repair technique joins broken pottery with lacquer and finishes it with gold?"],
+        choices: [["金継ぎ", "Kintsugi"], ["蒔絵", "Maki-e"], ["螺鈿", "Raden"]],
+        why: ["金継ぎは、割れや欠けを漆で接着し、継ぎ目を金粉などで装飾する技法です。傷あとを景色として楽しみます。", "Kintsugi bonds cracks with lacquer and decorates the seams with gold powder, treating the repair as part of the piece's beauty."] },
+      { q: ["「宇治茶」で知られる宇治市があるのは、どの府県？", "Which prefecture is home to Uji, famous for Uji tea?"],
+        choices: [["京都府", "Kyoto"], ["静岡県", "Shizuoka"], ["鹿児島県", "Kagoshima"]],
+        why: ["宇治市は京都府の南部にあります。ツアー「宇治で茶師と過ごす一日」の舞台です。", "Uji is in southern Kyoto Prefecture, and it is the setting of our tour “A day with a tea master in Uji.”"] },
+      { q: ["「江戸切子」は、何に模様を刻む工芸品？", "What material is Edo Kiriko cut into?"],
+        choices: [["ガラス", "Glass"], ["木", "Wood"], ["和紙", "Washi paper"]],
+        why: ["江戸切子は、ガラスの表面に回転する道具で模様を刻む、東京の伝統工芸です。", "Edo Kiriko is a traditional Tokyo craft of cutting patterns into glass with rotating tools."] },
+      { q: ["太陽が輝くしくみと同じ原理を使うエネルギーは？", "Which energy uses the same principle that makes the Sun shine?"],
+        choices: [["フュージョン（核融合）", "Fusion"], ["原子力（核分裂）", "Nuclear fission"], ["地熱", "Geothermal"]],
+        why: ["フュージョンは、軽い原子核どうしを融合させてエネルギーを取り出します。太陽の中心でも同じ反応が起きています。", "Fusion releases energy by fusing light atomic nuclei, the same reaction that powers the Sun's core."] },
+      { q: ["ペロブスカイト太陽電池の特長として、正しいものは？", "Which is a key feature of perovskite solar cells?"],
+        choices: [["薄く、軽く、曲げられる", "Thin, light and flexible"], ["夜でも昼と同じだけ発電できる", "Generates as much at night as by day"], ["材料にシリコンが欠かせない", "Requires silicon as a material"]],
+        why: ["材料を塗って作れるため、薄く軽く曲げられるのが特長です。これまで置けなかった壁や窓への設置が期待されています。", "Because they can be coated or printed, they are thin, light and flexible, and could go on walls and windows where panels never fit before."] },
+    ];
+
+    const card = $("#gCard");
+    let order = [], idx = 0, score = 0;
+    const shuffle = (a) => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const L = (pair) => pair[lang === "en" ? 1 : 0];
+
+    const start = () => { order = QUIZ.map((q) => ({ ...q, opts: shuffle(q.choices.map((c, i) => ({ c, right: i === 0 }))) })); idx = 0; score = 0; renderQ(); };
+
+    const renderQ = () => {
+      const q = order[idx];
+      card.innerHTML = `
+        <div class="g-meta"><span>${tr(`第${idx + 1}問 / 全${order.length}問`, `Question ${idx + 1} of ${order.length}`)}</span><span>${tr("正解", "Correct")} <b>${score}</b></span></div>
+        <div class="g-bar" aria-hidden="true"><span style="width:${(idx / order.length) * 100}%"></span></div>
+        <h2 class="g-q" tabindex="-1">${esc(L(q.q))}</h2>
+        <div class="g-choices">${q.opts.map((o, i) => `<button class="g-choice" type="button" data-i="${i}"><span class="k">${"ABC"[i]}</span><span>${esc(L(o.c))}</span></button>`).join("")}</div>
+        <div id="gAfter"></div>`;
+      card.querySelector(".g-q").focus();
+    };
+
+    const answer = (i) => {
+      const q = order[idx];
+      const right = q.opts[i].right;
+      if (right) score++;
+      card.querySelectorAll(".g-choice").forEach((b, j) => {
+        b.disabled = true;
+        if (q.opts[j].right) b.classList.add("is-right");
+        else if (j === i) b.classList.add("is-wrong");
+      });
+      card.querySelector(".g-meta b").textContent = score;
+      const last = idx === order.length - 1;
+      card.querySelector("#gAfter").innerHTML = `
+        <div class="g-feedback"><b>${right ? tr("正解！", "Correct!") : tr("残念、不正解です", "Not quite")}</b>${esc(L(q.why))}</div>
+        <div class="g-actions"><button class="btn btn--g" type="button" id="gNext">${last ? tr("結果を見る", "See my score") : tr("次の問題へ", "Next question")}</button></div>`;
+      card.querySelector("#gNext").focus();
+    };
+
+    const renderResult = () => {
+      const coins = score * 10;
+      const msg = score === order.length ? tr("全問正解です！ 工房マイスターの称号を授与します。", "Perfect score! You've earned the title of Koubo Meister.")
+        : score >= 3 ? tr("あと少しです。講座やツアーで、もっと知ってみませんか。", "So close! Learn more through our courses and tours.")
+        : tr("ここからが始まりです。気になったテーマを、講座で学んでみましょう。", "This is just the start. Explore the topics that caught your interest in our courses.");
+      card.innerHTML = `
+        <div class="g-result">
+          <p class="g-meta" style="justify-content:center">${tr("結果", "Your result")}</p>
+          <p class="g-score" tabindex="-1">${score}<small>/ ${order.length}</small></p>
+          <p class="g-coin">🪙 ${tr(`工房コイン ${coins} 枚を獲得（デモ）`, `${coins} Koubo Coins earned (demo)`)}</p>
+          <p class="g-msg">${msg}</p>
+          <div class="g-actions">
+            <button class="btn btn--g" type="button" id="gRetry">${tr("もう一度挑戦する", "Play again")}</button>
+            <a class="btn btn--gline" href="./#academy">${tr("関連する講座を見る", "Browse related courses")}</a>
+            <a class="btn btn--gline" href="./#metaverse">${tr("メタバースに戻る", "Back to the Metaverse")}</a>
+          </div>
+        </div>`;
+      card.querySelector(".g-score").focus();
+    };
+
+    card.addEventListener("click", (e) => {
+      const c = e.target.closest(".g-choice");
+      if (c && !c.disabled) return answer(Number(c.dataset.i));
+      if (e.target.closest("#gNext")) { idx++; return idx < order.length ? renderQ() : renderResult(); }
+      if (e.target.closest("#gRetry")) start();
+    });
+    // キーボード：A / B / C で回答
+    document.addEventListener("keydown", (e) => {
+      const k = "abc".indexOf(e.key.toLowerCase());
+      if (k < 0 || e.metaKey || e.ctrlKey) return;
+      const btn = card.querySelectorAll(".g-choice")[k];
+      if (btn && !btn.disabled) answer(k);
+    });
+
+    const applyLang = () => {
+      document.documentElement.lang = lang;
+      document.title = tr("工房クイズ | 人生工房 ゲームアリーナ", "Koubo Quiz | Jinsei Koubo Game Arena");
+      document.querySelectorAll("[data-t]").forEach((el) => { el.textContent = L(UI[el.dataset.t]); });
+      const b = $("#gLang");
+      b.textContent = lang === "en" ? "日本語" : "EN";
+      b.setAttribute("aria-label", lang === "en" ? "日本語に切り替える" : "Switch to English");
+    };
+    $("#gLang").addEventListener("click", () => {
+      lang = lang === "en" ? "ja" : "en";
+      try { localStorage.setItem(LANG_KEY, lang); } catch (_) { /* 保存不可の環境 */ }
+      applyLang();
+      // 表示中の画面を、言語だけ切り替えて表示し直す（回答前の状態に戻る）
+      if (card.querySelector(".g-result")) renderResult(); else renderQ();
+    });
+
+    applyLang();
+    start();
+  })();
+  </script>
+</body>
+</html>

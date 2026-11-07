@@ -412,16 +412,16 @@
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   const visited = new Set();
   const zones = [
-    { id: "game", x: 20, y: 20, w: 200, h: 130, color: "#e17055", icon: "🎮",
+    { id: "game", href: "game.html", x: 20, y: 20, w: 200, h: 130, color: "#e17055", icon: "🎮",
       ja: { name: "ゲームアリーナ", desc: "謎解きやミニゲームで遊べるエリア。ランキング上位には工房コインをプレゼントする想定です。" },
       en: { name: "Game Arena", desc: "Play puzzles and mini-games. Top players could earn Koubo Coins." } },
-    { id: "market", x: W - 220, y: 20, w: 200, h: 130, color: "#0984e3", icon: "🏪",
+    { id: "market", href: "#market", x: W - 220, y: 20, w: 200, h: 130, color: "#0984e3", icon: "🏪",
       ja: { name: "マーケット展示館", desc: "マーケットの出品物を3Dで手に取るように見られる展示エリアです。" },
       en: { name: "Market Gallery", desc: "See market items in 3D, almost as if you were holding them." } },
-    { id: "class", x: 20, y: Hh - 150, w: 200, h: 130, color: "#00b894", icon: "🎓",
+    { id: "class", href: "#academy", x: 20, y: Hh - 150, w: 200, h: 130, color: "#00b894", icon: "🎓",
       ja: { name: "ライブ教室", desc: "講師のアバターと一緒に、リアルタイムでワークショップに参加できる教室です。" },
       en: { name: "Live Classroom", desc: "Join real-time workshops alongside your instructor's avatar." } },
-    { id: "theater", x: W - 220, y: Hh - 150, w: 200, h: 130, color: "#fdcb6e", icon: "🎬",
+    { id: "theater", href: "#theater", x: W - 220, y: Hh - 150, w: 200, h: 130, color: "#fdcb6e", icon: "🎬",
       ja: { name: "シアタールーム", desc: "友だちと同じ作品を同時に見ながら、感想を語り合える上映室です。" },
       en: { name: "Theater Room", desc: "Watch the same title with friends and share reactions as you go." } },
   ];
@@ -443,7 +443,43 @@
     $("#metaZone").textContent = info.name;
     $("#metaDesc").textContent = info.desc;
     $("#metaVisited").textContent = `${visited.size} / ${zones.length}`;
+    const enter = $("#metaEnter");
+    enter.hidden = !currentZone;
+    if (currentZone) {
+      enter.href = currentZone.href;
+      enter.textContent = tr(`${info.name}に入る`, `Enter ${info.name}`);
+      enter.style.setProperty("--zone", currentZone.color);
+    }
   };
+
+  /* ---------- エリアに入る：画面を暗転させてから、そのページへ移動 ---------- */
+  let warping = false;
+  const goZone = (z) => {
+    if (!z || warping) return;
+    warping = true;
+    const warp = $("#metaWarp");
+    warp.style.setProperty("--zone", z.color);
+    warp.querySelector("p").textContent = tr(`${z[lang].name}へ移動しています…`, `Heading to ${z[lang].name}…`);
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    warp.classList.add("is-on");
+    setTimeout(() => {
+      if (z.href.startsWith("#")) {
+        // 同じページ内のセクションへ移動し、見出しにフォーカスを移す
+        const sec = $(z.href);
+        sec.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+        try { history.pushState(null, "", z.href); } catch (_) { /* 履歴を変えられない環境 */ }
+        const h = sec.querySelector("h2");
+        if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+        setTimeout(() => { warp.classList.remove("is-on"); warping = false; }, 300);
+      } else {
+        // 別のページ（ゲームアリーナ）へ移動
+        window.location.href = z.href;
+      }
+    }, reduceMotion ? 0 : 650);
+  };
+  $("#metaEnter").addEventListener("click", (e) => { e.preventDefault(); goZone(currentZone); });
+  // 戻るボタンでこのページに戻ったときは、暗転を解除する
+  window.addEventListener("pageshow", () => { $("#metaWarp").classList.remove("is-on"); warping = false; });
 
   function roundRect(x, y, w, h, r) {
     ctx.beginPath();
@@ -475,8 +511,16 @@
       roundRect(z.x, z.y, z.w, z.h, 14); ctx.fill(); ctx.stroke();
       ctx.font = "34px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(z.icon, z.x + z.w / 2, z.y + z.h / 2 - 12);
-      ctx.font = "bold 17px 'Zen Kaku Gothic New', sans-serif"; ctx.fillStyle = "#fff";
+      ctx.font = "bold 17px 'Noto Sans JP', sans-serif"; ctx.fillStyle = "#fff";
       ctx.fillText(z[lang].name, z.x + z.w / 2, z.y + z.h / 2 + 26);
+      if (active) {
+        const label = tr("Enter・タップで入る", "Press Enter or tap to enter");
+        ctx.font = "bold 13px 'Noto Sans JP', sans-serif";
+        const w = ctx.measureText(label).width + 20;
+        const ly = z.y < Hh / 2 ? z.y + z.h + 18 : z.y - 18;
+        ctx.fillStyle = z.color; roundRect(z.x + z.w / 2 - w / 2, ly - 13, w, 26, 13); ctx.fill();
+        ctx.fillStyle = "#14121f"; ctx.fillText(label, z.x + z.w / 2, ly + 1);
+      }
     });
     ctx.lineWidth = 1;
     npcs.forEach((n) => {
@@ -486,7 +530,7 @@
       avatar(n.x, n.y, 11, n.c);
     });
     avatar(me.x, me.y + Math.sin(t / 200) * 1.5, me.r, "#ffffff", true);
-    ctx.font = "bold 14px 'Zen Kaku Gothic New', sans-serif"; ctx.fillStyle = "#fff"; ctx.textAlign = "center";
+    ctx.font = "bold 14px 'Noto Sans JP', sans-serif"; ctx.fillStyle = "#fff"; ctx.textAlign = "center";
     ctx.fillText(tr("あなた", "You"), me.x, me.y - me.r - 10);
   };
   const update = () => {
@@ -518,6 +562,9 @@
   const keyMap = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down", a: "left", d: "right", w: "up", s: "down" };
   let metaVisible = false;
   document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && metaVisible && currentZone && (document.activeElement === document.body || document.activeElement === canvas)) {
+      e.preventDefault(); goZone(currentZone); return;
+    }
     const k = keyMap[e.key];
     if (!k || !metaVisible) return;
     const tag = document.activeElement && document.activeElement.tagName;
@@ -535,7 +582,10 @@
   });
   canvas.addEventListener("pointerdown", (e) => {
     const r = canvas.getBoundingClientRect();
-    target = { x: ((e.clientX - r.left) / r.width) * W, y: ((e.clientY - r.top) / r.height) * Hh };
+    const p = { x: ((e.clientX - r.left) / r.width) * W, y: ((e.clientY - r.top) / r.height) * Hh };
+    const z = currentZone;
+    if (z && p.x > z.x && p.x < z.x + z.w && p.y > z.y && p.y < z.y + z.h) { goZone(z); return; }
+    target = p;
   });
   // 画面に見えている間だけ動かす（省電力）
   if ("IntersectionObserver" in window) {
@@ -620,7 +670,6 @@
     ['[data-filter="local"]', "Countryside"],
 
     ["#metaverse .section__title", "Play and connect in the Metaverse Workshop"],
-    ["#metaverse .section__lead", "Walk through a virtual “workshop town” as an avatar and join games and events. In the mini demo below, use the arrow keys, or click or tap where you want to walk. Try entering each area."],
     ["#metaCanvas", "Metaverse Workshop mini demo. Move your avatar to visit each area.", "aria-label"],
     [".meta__pad", "Movement buttons", "aria-label"],
     ['.meta__pad [data-dir="up"]', "Up", "aria-label"],
@@ -737,6 +786,7 @@
     [".footer__bottom", "© Jinsei Koubo · Concept demo site"],
     ["#toTop", "Back to top", "aria-label"],
     [".m-cta .btn", "Go to sign-up"],
+    ["#metaverse .section__lead", "Walk through a virtual “workshop town” as an avatar and join games and events. In the mini demo below, use the arrow keys, or click or tap where you want to walk. Step into an area and press “Enter” to go to that page."],
   ];
   /* data-i18n の付いた要素：日本語はHTMLのまま、英語はこの辞書から差し替える */
   const I18N_KEYS = {

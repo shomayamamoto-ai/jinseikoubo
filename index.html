@@ -188,11 +188,12 @@
           <p class="section__en"><span class="badge" aria-hidden="true">遊</span>METAVERSE</p>
           <h2 class="section__title">メタバース工房で、<br class="sp">遊びながらつながる</h2>
           <p class="section__lead">
-            仮想空間の「工房街」をアバターで歩き、ゲームやイベントに参加できます。<br class="pc">下のミニデモでは、矢印キー、または画面をクリック・タップした場所へアバターが歩きます。各エリアに入ってみてください。
+            仮想空間の「工房街」をアバターで歩き、ゲームやイベントに参加できます。<br class="pc">下のミニデモでは、矢印キー、または画面をクリック・タップした場所へアバターが歩きます。エリアに入って「入る」を押すと、そのページへ移動します。
           </p>
         </header>
         <div class="meta">
           <div class="meta__stage">
+            <div class="meta__warp" id="metaWarp" aria-hidden="true"><p></p></div>
             <canvas id="metaCanvas" width="720" height="420" aria-label="メタバース工房のミニデモ。アバターを動かしてエリアを訪れることができます。"></canvas>
             <div class="meta__pad" aria-label="移動ボタン">
               <button data-dir="up" aria-label="上へ">▲</button>
@@ -206,6 +207,7 @@
             <p class="meta__zone" id="metaZone" aria-live="polite">工房広場</p>
             <p class="meta__visited">訪れたエリア <b id="metaVisited">0 / 4</b></p>
             <p class="meta__desc" id="metaDesc">中央の広場です。4つのエリアに歩いていくと、それぞれの説明が表示されます。</p>
+            <a class="btn meta__enter" id="metaEnter" href="#metaverse" hidden></a>
             <ul class="meta__features">
               <li>ミニゲーム・謎解きイベント</li>
               <li>ツアー参加者や講師との交流会</li>

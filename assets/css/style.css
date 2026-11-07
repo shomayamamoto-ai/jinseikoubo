@@ -1062,3 +1062,21 @@ input[type="range"]::-moz-range-thumb { width: 28px; height: 28px; }
 @media (min-width: 1080px) {
   .header .container { padding-left: max(40px, env(safe-area-inset-left, 0px)); padding-right: max(40px, env(safe-area-inset-right, 0px)); }
 }
+
+
+/* ---------- メタバース：エリアに入る ---------- */
+.meta__stage { position: relative; }
+.meta__enter {
+  margin-top: 16px; width: 100%; min-height: 52px;
+  background: var(--zone, #ffd36b); color: #14121f; font-weight: 900;
+}
+.meta__enter::after { content: "→"; width: auto; height: auto; background: none; font-size: 18px; }
+.meta__warp {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 50% 50%, var(--zone, #6c5ce7) 0%, #0b0a14 70%);
+  opacity: 0; transition: opacity var(--dur-long) var(--ease-standard);
+}
+.meta__warp.is-on { opacity: 1; pointer-events: auto; }
+.meta__warp p { color: #fff; font-weight: 900; font-size: clamp(16px, 3vw, 22px); text-shadow: 0 2px 12px rgba(0,0,0,.5); transform: scale(.96); transition: transform var(--dur-long) var(--ease-emph-decel); }
+.meta__warp.is-on p { transform: none; }
