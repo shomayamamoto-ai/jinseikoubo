@@ -20,7 +20,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -50,7 +50,7 @@
           <li><a href="#market"><i aria-hidden="true">市</i>マーケット</a></li>
           <li><a href="#fund"><i aria-hidden="true">研</i>研究支援</a></li>
         </ul>
-        <a class="btn btn--accent btn--sm" href="#join">事前登録フォームへ</a>
+        <a class="btn btn--primary btn--sm" href="#join">事前登録フォームへ</a>
       </nav>
     </div>
   </header>
@@ -58,18 +58,17 @@
   <main id="main">
     <!-- ===== HERO ===== -->
     <section class="hero">
-      <div class="hero__bg" aria-hidden="true"></div>
+      <div class="kasumi kasumi--hero" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
       <div class="container hero__inner">
         <p class="hero__eyebrow">旅する。学ぶ。遊ぶ。つくる。<br class="sp">未来を支える。</p>
-        <h1 class="hero__title">人生を、<br class="sp">自分の手で<br><em>つくる</em>場所。</h1>
-        <p class="hero__lead">
-          訪日ツアー、メタバース、オンライン講座、動画、<br class="pc">映像配信、マーケット、研究支援。<br class="pc">人生工房は、この7つのサービスを<br class="pc">ひとつのアカウントでつなぐプラットフォームです。
-        </p>
-        <div class="hero__cta">
-          <a class="btn btn--accent" href="#services">7つのサービスを見る</a>
-          <a class="btn btn--ghost" href="#fund">研究支援の案件を見る</a>
+        <div class="hero__ring">
+          <h1 class="hero__title"><span class="hero__pre">人生を、自分の手で</span><span class="hero__big">創</span><span class="hero__post">る場所。</span></h1>
         </div>
-        <ul class="hero__kanji" aria-hidden="true"><li>旅</li><li>遊</li><li>学</li><li>発</li><li>観</li><li>市</li><li>研</li></ul>
+        <p class="hero__lead">訪日ツアー、メタバース、オンライン講座、動画、<br class="pc">映像配信、マーケット、研究支援。<br class="pc">人生工房は、この7つのサービスを<br class="pc">ひとつのアカウントでつなぐプラットフォームです。</p>
+        <div class="hero__cta">
+          <a class="btn btn--primary" href="#services">7つのサービスを見る</a>
+          <a class="btn btn--line" href="#fund">研究支援の案件を見る</a>
+        </div>
         <ul class="hero__stats" aria-label="構想中の規模（目標値）">
           <li><strong>7</strong><span>サービス</span></li>
           <li><strong>1</strong><span>共通アカウント</span></li>
@@ -78,26 +77,32 @@
       </div>
     </section>
 
-    <!-- ===== SERVICES OVERVIEW ===== -->
-    <section class="section" id="services">
-      <div class="container">
-        <header class="section__head">
-          <p class="section__en">SERVICES</p>
-          <h2 class="section__title">人生工房の7つの工房</h2>
-          <p class="section__lead">
-            どこから入っても、ほかのサービスとつながります。<br class="pc">旅で出会った職人の講座を受け、作品をマーケットで買い、<br class="pc">その売上の一部が未来の研究を支える。そんな循環をめざします。
-          </p>
-        </header>
-        <ul class="svc-grid">
-          <li><a class="svc" href="#tour" style="--c:var(--c-tour)"><span class="svc__mark" aria-hidden="true">旅</span><h3>インバウンドツアー</h3><p>職人・地域の暮らしに触れる、訪日客向けの体験型ツアー。</p></a></li>
-          <li><a class="svc" href="#metaverse" style="--c:var(--c-meta)"><span class="svc__mark" aria-hidden="true">遊</span><h3>メタバース工房</h3><p>アバターで工房街を歩き、ミニゲームや交流会に参加できる仮想空間。</p></a></li>
-          <li><a class="svc" href="#academy" style="--c:var(--c-academy)"><span class="svc__mark" aria-hidden="true">学</span><h3>アカデミー</h3><p>金継ぎ・木工・日本酒など、職人や研究者から直接学べるオンライン講座。</p></a></li>
-          <li><a class="svc" href="#channel" style="--c:var(--c-channel)"><span class="svc__mark" aria-hidden="true">発</span><h3>工房チャンネル</h3><p>職人の手仕事や研究の解説を、誰でも投稿・発信できる動画サービス。</p></a></li>
-          <li><a class="svc" href="#theater" style="--c:var(--c-theater)"><span class="svc__mark" aria-hidden="true">観</span><h3>工房シアター</h3><p>ドキュメンタリー・ドラマ・アニメのオリジナル作品が見放題の定額配信。</p></a></li>
-          <li><a class="svc" href="#market" style="--c:var(--c-market)"><span class="svc__mark" aria-hidden="true">市</span><h3>工房マーケット</h3><p>作品や古道具を個人どうしで売り買いできる、オークションと即決のマーケット。</p></a></li>
-          <li class="svc-grid__wide"><a class="svc svc--feature" href="#fund" style="--c:var(--c-fund)"><span class="svc__mark" aria-hidden="true">研</span><h3>未来研究ファンド</h3><p>ペロブスカイト太陽電池やフュージョンエネルギーなどの研究を、<br class="pc">1口1万円程度から個人が支援できる仕組み。</p></a></li>
-        </ul>
+    <!-- ===== CONCEPT ===== -->
+    <section class="section concept" id="concept">
+      <div class="kasumi kasumi--concept" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="container concept__inner">
+        <p class="concept__label">人生工房の考え方</p>
+        <h2 class="concept__title"><span class="ink">手</span>で学び、<br><span class="ink">未来</span>を支える</h2>
+        <ul class="concept__stamps" aria-hidden="true"><li>旅</li><li>遊</li><li>学</li><li>発</li><li>観</li><li>市</li><li>研</li></ul>
+        <p class="concept__text">職人の手仕事から、ペロブスカイト太陽電池や<br class="pc">フュージョンエネルギーの研究まで。<br class="pc">人生工房は、旅や学びで得た体験を、<br class="pc">次の誰かと未来の研究へつなぐ場所をめざします。</p>
       </div>
+    </section>
+
+    <!-- ===== SERVICES OVERVIEW ===== -->
+    <section class="section services" id="services">
+      <div class="container services__head">
+        <h2 class="section__title services__title">七つの工房</h2>
+        <p class="section__lead">どこから入っても、ほかのサービスとつながります。<br class="pc">旅で出会った職人の講座を受け、作品をマーケットで買い、<br class="pc">その売上の一部が未来の研究を支える。そんな循環をめざします。</p>
+      </div>
+      <ul class="works">
+        <li><a class="svc work" href="#tour" style="--c:var(--c-tour);--work-bg:linear-gradient(115deg,#2d2116 0%,#6b4a2b 55%,#a8743f 100%)"><span class="work__mark" aria-hidden="true">旅</span><span class="work__body"><span class="work__en">INBOUND TOUR</span><h3>インバウンドツアー</h3><p>職人・地域の暮らしに触れる、訪日客向けの体験型ツアー。</p></span><span class="work__arrow" aria-hidden="true">→</span></a></li>
+        <li><a class="svc work" href="#metaverse" style="--c:var(--c-meta);--work-bg:linear-gradient(115deg,#120f26 0%,#2f2668 55%,#5a49b8 100%)"><span class="work__mark" aria-hidden="true">遊</span><span class="work__body"><span class="work__en">METAVERSE</span><h3>メタバース工房</h3><p>アバターで工房街を歩き、ミニゲームや交流会に参加できる仮想空間。</p></span><span class="work__arrow" aria-hidden="true">→</span></a></li>
+        <li><a class="svc work" href="#academy" style="--c:var(--c-academy);--work-bg:linear-gradient(115deg,#13241b 0%,#2c5a40 55%,#4f8f6a 100%)"><span class="work__mark" aria-hidden="true">学</span><span class="work__body"><span class="work__en">ACADEMY</span><h3>アカデミー</h3><p>金継ぎ・木工・日本酒など、職人や研究者から直接学べるオンライン講座。</p></span><span class="work__arrow" aria-hidden="true">→</span></a></li>
+        <li><a class="svc work" href="#channel" style="--c:var(--c-channel);--work-bg:linear-gradient(115deg,#26100f 0%,#6b2420 55%,#b2453a 100%)"><span class="work__mark" aria-hidden="true">発</span><span class="work__body"><span class="work__en">CHANNEL</span><h3>工房チャンネル</h3><p>職人の手仕事や研究の解説を、誰でも投稿・発信できる動画サービス。</p></span><span class="work__arrow" aria-hidden="true">→</span></a></li>
+        <li><a class="svc work" href="#theater" style="--c:var(--c-theater);--work-bg:linear-gradient(115deg,#0b0b0d 0%,#3a2a12 55%,#8a6420 100%)"><span class="work__mark" aria-hidden="true">観</span><span class="work__body"><span class="work__en">THEATER</span><h3>工房シアター</h3><p>ドキュメンタリー・ドラマ・アニメのオリジナル作品が見放題の定額配信。</p></span><span class="work__arrow" aria-hidden="true">→</span></a></li>
+        <li><a class="svc work" href="#market" style="--c:var(--c-market);--work-bg:linear-gradient(115deg,#0f1a2b 0%,#22436e 55%,#3c7fb1 100%)"><span class="work__mark" aria-hidden="true">市</span><span class="work__body"><span class="work__en">MARKET</span><h3>工房マーケット</h3><p>作品や古道具を個人どうしで売り買いできる、オークションと即決のマーケット。</p></span><span class="work__arrow" aria-hidden="true">→</span></a></li>
+        <li><a class="svc work" href="#fund" style="--c:var(--c-fund);--work-bg:linear-gradient(115deg,#0a1f1d 0%,#155a52 55%,#3a9b8f 100%)"><span class="work__mark" aria-hidden="true">研</span><span class="work__body"><span class="work__en">FUTURE RESEARCH FUND</span><h3>未来研究ファンド</h3><p>ペロブスカイト太陽電池やフュージョンエネルギーなどの研究を、<br class="pc">1口1万円程度から個人が支援できる仕組み。</p></span><span class="work__arrow" aria-hidden="true">→</span></a></li>
+      </ul>
     </section>
 
     <!-- ===== 01 TOUR ===== -->
@@ -308,12 +313,12 @@
           <h2 class="section__title">ひとつのアカウントで、<br class="sp">すべてがつながる</h2>
         </header>
         <div class="eco">
-          <ol class="cycle" aria-label="人生工房の循環の例">
-            <li><b>旅</b><span>ツアーで<br>職人に出会う</span></li>
-            <li><b>学</b><span>その職人の<br>講座を受ける</span></li>
-            <li><b>市</b><span>作品を<br>マーケットで買う</span></li>
-            <li><b>研</b><span>売上の一部が<br>研究を支える</span></li>
-          </ol>
+          <div class="venn" role="img" aria-label="人生工房の3つの役割の重なり：体験する、学ぶ・観る、支える">
+            <div class="venn__c venn__c--1"><b>体験する</b><span>旅・遊</span></div>
+            <div class="venn__c venn__c--2"><b>学ぶ・観る</b><span>学・発・観</span></div>
+            <div class="venn__c venn__c--3"><b>支える</b><span>市・研</span></div>
+            <p class="venn__core">人生工房</p>
+          </div>
           <div class="eco__list">
             <div class="eco__item"><strong>共通ポイント「工房コイン」</strong><p>ツアー参加や講座修了でたまり、マーケットやシアターで使える想定です。</p></div>
             <div class="eco__item"><strong>体験が次の体験を呼ぶ</strong><p>ひとつのサービスでの出会いが、ほかのサービスへの入口になるよう設計します。</p></div>
@@ -358,16 +363,18 @@
     </section>
 
     <!-- ===== JOIN ===== -->
-    <section class="section join" id="join">
-      <div class="container join__inner">
-        <h2 class="join__title">人生工房の最初のメンバーに<br class="sp">なりませんか。</h2>
-        <p>サービス開始のお知らせや、先行体験のご案内をお届けします。</p>
-        <form class="join__form" id="joinForm" novalidate>
-          <label class="visually-hidden" for="joinEmail">メールアドレス</label>
-          <input type="email" id="joinEmail" placeholder="メールアドレス" required autocomplete="email">
-          <button class="btn btn--primary" type="submit">登録してお知らせを受け取る</button>
-        </form>
-        <p class="join__msg" id="joinMsg" aria-live="polite"></p>
+    <section class="join" id="join">
+      <div class="join__arc">
+        <div class="container join__inner">
+          <h2 class="join__title">人生工房の最初のメンバーに<br class="sp">なりませんか。</h2>
+          <p>サービス開始のお知らせや、先行体験のご案内をお届けします。</p>
+          <form class="join__form" id="joinForm" novalidate>
+            <label class="visually-hidden" for="joinEmail">メールアドレス</label>
+            <input type="email" id="joinEmail" placeholder="メールアドレス" required autocomplete="email">
+            <button class="btn btn--light" type="submit">登録してお知らせを受け取る</button>
+          </form>
+          <p class="join__msg" id="joinMsg" aria-live="polite"></p>
+        </div>
       </div>
     </section>
   </main>
