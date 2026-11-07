@@ -50,6 +50,7 @@
   const nav = $("#nav");
   const setNav = (open) => {
     nav.classList.toggle("is-open", open);
+    document.body.classList.toggle("is-nav-open", open && window.innerWidth < 1080);
     navToggle.setAttribute("aria-expanded", String(open));
     navToggle.setAttribute("aria-label", open ? tr("メニューを閉じる", "Close menu") : tr("メニューを開く", "Open menu"));
   };
@@ -735,9 +736,11 @@
     [".footer__links li:nth-child(9) span", "Privacy policy (coming soon)"],
     [".footer__bottom", "© Jinsei Koubo · Concept demo site"],
     ["#toTop", "Back to top", "aria-label"],
+    [".m-cta .btn", "Go to sign-up"],
   ];
   /* data-i18n の付いた要素：日本語はHTMLのまま、英語はこの辞書から差し替える */
   const I18N_KEYS = {
+    "ui.swipe": "Swipe to see more",
     "why.title": "Why Jinsei Koubo, and why now",
     "why.lead": "Visitors to Japan have hit a record high, and the government has set clear targets for next-generation energy.<br class=\"pc\"> Jinsei Koubo is built where these two currents meet.",
     "why.s1.l": "Visitors to Japan in 2025",
@@ -811,10 +814,11 @@
     keyEls.forEach((el) => { el.innerHTML = lang === "en" ? I18N_KEYS[el.dataset.i18n] : keyJa.get(el); });
     document.documentElement.lang = lang;
     document.title = TITLE[lang];
+    // 言語メニュー：ボタンには「今の言語」を表示し、選択中の項目に印を付ける
     const btn = $("#langToggle");
-    btn.textContent = lang === "en" ? "日本語" : "EN";
-    btn.setAttribute("lang", lang === "en" ? "ja" : "en");
-    btn.setAttribute("aria-label", lang === "en" ? "日本語に切り替える" : "Switch to English");
+    btn.textContent = lang === "en" ? "English" : "日本語";
+    btn.setAttribute("aria-label", tr("言語を選ぶ（現在：日本語）", "Choose language (current: English)"));
+    $$("#langMenu [data-lang]").forEach((b) => b.setAttribute("aria-current", String(b.dataset.lang === lang)));
     setNav(nav.classList.contains("is-open"));
     renderTours();
     renderCourses();
@@ -827,12 +831,36 @@
     showZoneInfo();
     draw(0);
   };
-  $("#langToggle").addEventListener("click", () => {
-    lang = lang === "en" ? "ja" : "en";
+  // 言語メニューの開け閉め（外側のクリック・Escキーでも閉じる）
+  const langBtn = $("#langToggle");
+  const langMenu = $("#langMenu");
+  const setLangMenu = (open) => { langMenu.hidden = !open; langBtn.setAttribute("aria-expanded", String(open)); };
+  langBtn.addEventListener("click", (e) => { e.stopPropagation(); setLangMenu(langMenu.hidden); });
+  document.addEventListener("click", (e) => { if (!e.target.closest(".lang-switch")) setLangMenu(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !langMenu.hidden) { setLangMenu(false); langBtn.focus(); } });
+  langMenu.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-lang]");
+    if (!b) return;
+    setLangMenu(false);
+    langBtn.focus();
+    if (b.dataset.lang === lang) return;
+    lang = b.dataset.lang;
     try { localStorage.setItem(LANG_KEY, lang); } catch (_) { /* 保存不可の環境 */ }
     applyLang();
     toast(tr("日本語に切り替えました", "Switched to English"));
   });
+
+  /* ---------- いま見ているセクションのメニューに印を付ける ---------- */
+  if ("IntersectionObserver" in window) {
+    const navLinks = $$('#nav ul a[href^="#"]');
+    const secObs = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        navLinks.forEach((a) => a.toggleAttribute("aria-current", a.getAttribute("href") === "#" + en.target.id));
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    navLinks.forEach((a) => { const sec = $(a.getAttribute("href")); if (sec) secObs.observe(sec); });
+  }
 
   /* ---------- スクロール時の表示アニメーション ----------
      要素は最初から見えている状態。画面に入ったときに軽く動かすだけ。 */
@@ -854,6 +882,26 @@
     });
   }
   $$(".svc, .eco__item, .roadmap li, .flow li").forEach((el) => el.classList.add("reveal"));
+
+  /* ---------- スマホ：画面下の事前登録ボタン ----------
+     ファーストビューを過ぎたら表示し、登録フォームが見えている間は隠す */
+  const mCta = $("#mCta");
+  if ("IntersectionObserver" in window) {
+    const seen = { hero: true, join: false };
+    const syncCta = () => {
+      const show = !seen.hero && !seen.join;
+      mCta.classList.toggle("is-show", show);
+      mCta.setAttribute("aria-hidden", String(!show));
+      mCta.querySelector("a").tabIndex = show ? 0 : -1;
+      document.body.classList.toggle("has-mcta", show);
+    };
+    new IntersectionObserver((entries) => {
+      entries.forEach((en) => { seen[en.target.id === "join" ? "join" : "hero"] = en.isIntersecting; });
+      syncCta();
+    }).observe($(".hero"));
+    const joinObs = new IntersectionObserver(([en]) => { seen.join = en.isIntersecting; syncCta(); });
+    joinObs.observe($("#join"));
+  }
 
   /* ---------- ページ先頭へ戻るボタン ---------- */
   const toTop = $("#toTop");

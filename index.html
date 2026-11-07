@@ -36,7 +36,13 @@
         <span class="logo__mark" aria-hidden="true">工</span>
         <span class="logo__text">人生工房<small>JINSEI KOUBO</small></span>
       </a>
-      <button class="lang-toggle" id="langToggle" type="button" lang="en" aria-label="Switch to English">EN</button>
+      <div class="lang-switch">
+        <button class="lang-toggle" id="langToggle" type="button" aria-expanded="false" aria-controls="langMenu">日本語</button>
+        <ul class="lang-menu" id="langMenu" hidden>
+          <li><button type="button" data-lang="ja" lang="ja">日本語</button></li>
+          <li><button type="button" data-lang="en" lang="en">English</button></li>
+        </ul>
+      </div>
       <button class="nav-toggle" aria-expanded="false" aria-controls="nav" aria-label="メニューを開く">
         <span></span><span></span><span></span>
       </button>
@@ -158,6 +164,7 @@
           <button class="chip" data-filter="tokyo">東京</button>
           <button class="chip" data-filter="local">地方</button>
         </div>
+        <p class="swipe-hint" data-i18n="ui.swipe">横にスワイプして見る</p>
         <div class="card-grid" id="tourList"></div>
         <div class="itinerary">
           <h3 class="sub-title" data-i18n="tour.it.title">モデル行程：京都・宇治で茶師と過ごす一日</h3>
@@ -225,6 +232,7 @@
           <button role="tab" class="tab" aria-selected="false" data-type="video">録画講座</button>
           <button role="tab" class="tab" aria-selected="false" data-type="live">ライブ</button>
         </div>
+        <p class="swipe-hint" data-i18n="ui.swipe">横にスワイプして見る</p>
         <div class="card-grid card-grid--4" id="courseList"></div>
       </div>
     </section>
@@ -244,7 +252,8 @@
             <label class="field-label" for="videoSearch">動画を検索</label>
             <input type="search" id="videoSearch" placeholder="例：陶芸、京都、研究">
           </div>
-          <div class="video-grid" id="videoList"></div>
+          <p class="swipe-hint" data-i18n="ui.swipe">横にスワイプして見る</p>
+        <div class="video-grid" id="videoList"></div>
           <p class="empty" id="videoEmpty" hidden>該当する動画が見つかりませんでした。</p>
         </div>
       </div>
@@ -301,6 +310,7 @@
             </select>
           </label>
         </div>
+        <p class="swipe-hint" data-i18n="ui.swipe">横にスワイプして見る</p>
         <div class="card-grid card-grid--4" id="marketList"></div>
         <div class="safety">
           <h3 class="sub-title" data-i18n="mk.safe.title">安心して売り買いできるしくみ（構想）</h3>
@@ -333,6 +343,7 @@
           <li><span>4</span><strong>成果を受け取る</strong><p>リターンの形は<br>案件ごとに異なる</p></li>
         </ol>
 
+        <p class="swipe-hint" data-i18n="ui.swipe">横にスワイプして見る</p>
         <div class="fund-grid" id="fundList"></div>
 
         <div class="sim">
@@ -506,6 +517,9 @@
     <p class="footer__bottom">© 人生工房 ― 構想デモサイト</p>
   </footer>
 
+  <div class="m-cta" id="mCta" aria-hidden="true">
+    <a class="btn btn--primary btn--block" href="#join" tabindex="-1">事前登録フォームへ</a>
+  </div>
   <button class="to-top" id="toTop" type="button" aria-label="ページの先頭へ戻る">↑</button>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
