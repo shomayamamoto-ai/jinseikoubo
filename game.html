@@ -89,6 +89,19 @@
   (() => {
     "use strict";
     const $ = (s) => document.querySelector(s);
+
+  /* ---------- 更新（リロード）したときは、必ずページの一番上から表示する ---------- */
+  (() => {
+    try { if ("scrollRestoration" in history) history.scrollRestoration = "manual"; } catch (_) { /* 非対応の環境 */ }
+    const nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+    const isReload = nav ? nav.type === "reload" : (performance.navigation && performance.navigation.type === 1);
+    if (!isReload) return;
+    // URL の位置指定（#academy など）を外し、先頭へ移動
+    if (location.hash) { try { history.replaceState(null, "", location.pathname + location.search); } catch (_) { /* 履歴を変えられない環境 */ } }
+    const toTop = () => window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    toTop();
+    window.addEventListener("load", toTop, { once: true });
+  })();
     const LANG_KEY = "jinseikoubo-lang";
     let lang = "ja";
     try {

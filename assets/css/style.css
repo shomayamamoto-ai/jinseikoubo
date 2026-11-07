@@ -1080,3 +1080,6 @@ input[type="range"]::-moz-range-thumb { width: 28px; height: 28px; }
 .meta__warp.is-on { opacity: 1; pointer-events: auto; }
 .meta__warp p { color: #fff; font-weight: 900; font-size: clamp(16px, 3vw, 22px); text-shadow: 0 2px 12px rgba(0,0,0,.5); transform: scale(.96); transition: transform var(--dur-long) var(--ease-emph-decel); }
 .meta__warp.is-on p { transform: none; }
+
+/* 言語切り替え時の位置補正は JavaScript で行うため、ブラウザの自動補正（スクロールアンカリング）は止める */
+html { overflow-anchor: none; }

@@ -11,6 +11,19 @@
   "use strict";
 
   const $ = (sel, root = document) => root.querySelector(sel);
+
+  /* ---------- 更新（リロード）したときは、必ずページの一番上から表示する ---------- */
+  (() => {
+    try { if ("scrollRestoration" in history) history.scrollRestoration = "manual"; } catch (_) { /* 非対応の環境 */ }
+    const nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+    const isReload = nav ? nav.type === "reload" : (performance.navigation && performance.navigation.type === 1);
+    if (!isReload) return;
+    // URL の位置指定（#academy など）を外し、先頭へ移動
+    if (location.hash) { try { history.replaceState(null, "", location.pathname + location.search); } catch (_) { /* 履歴を変えられない環境 */ } }
+    const toTop = () => window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    toTop();
+    window.addEventListener("load", toTop, { once: true });
+  })();
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
   const yen = (n) => "¥" + n.toLocaleString("ja-JP");
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -881,6 +894,25 @@
     showZoneInfo();
     draw(0);
   };
+  /* ---------- 言語を切り替えても、見ている場所を動かさない ----------
+     文章の長さが変わって上の部分の高さが変わるため、切り替え前に「画面の一番上に
+     見えている要素」と位置を記録し、切り替え後に同じ位置へスクロールを補正する */
+  const ANCHORS = "main > section, .section__head, .hero__ring, .concept__inner, .stat, .works > li, .filter, .tabs, .card-grid, .video-grid, .row, .itinerary, .timeline > li, .safety, .feature, .learn-card, .table-wrap, .fund-grid, .sim, .risk, .meta, .faq details, .eco, .roadmap > li, .join__arc, .footer";
+  const keepScrollPosition = (change) => {
+    const headerH = $(".header").getBoundingClientRect().bottom;
+    let anchor = null, best = Infinity;
+    $$(ANCHORS).forEach((el) => {
+      const top = el.getBoundingClientRect().top;
+      const d = Math.abs(top - headerH);
+      if (top >= headerH - 4 && d < best) { best = d; anchor = el; }
+    });
+    const before = anchor ? anchor.getBoundingClientRect().top : 0;
+    change();
+    if (!anchor) return;
+    const diff = anchor.getBoundingClientRect().top - before;
+    if (Math.abs(diff) > 0.5) window.scrollTo({ top: window.scrollY + diff, left: 0, behavior: "instant" });
+  };
+
   // 言語メニューの開け閉め（外側のクリック・Escキーでも閉じる）
   const langBtn = $("#langToggle");
   const langMenu = $("#langMenu");
@@ -896,7 +928,7 @@
     if (b.dataset.lang === lang) return;
     lang = b.dataset.lang;
     try { localStorage.setItem(LANG_KEY, lang); } catch (_) { /* 保存不可の環境 */ }
-    applyLang();
+    keepScrollPosition(applyLang);
     toast(tr("日本語に切り替えました", "Switched to English"));
   });
 
