@@ -18,23 +18,51 @@
   --mist-edge: rgba(29, 29, 31, .06);
   --primary: #1d1d1f;
   --primary-ink: #ffffff;
-  --shu: #e0715c;           /* 朱（半円・強調） */
+  --shu: #c33e25;           /* 朱（白文字を載せる面・強調文字。白地で5.2:1） */
+  --ring-shu: #e0715c;      /* 朱（装飾の円のみ） */
   --ki: #e3bf3f;            /* 黄 */
   --aomidori: #3a9b8f;      /* 青緑 */
   --ai: #3c7fb1;            /* 藍 */
   --shadow: 0 1px 2px rgba(29, 29, 31, .05), 0 10px 30px rgba(29, 29, 31, .06);
 
-  --c-tour: #b5642f;
+  /* サービス色：すべて白地・紙地で 4.6:1 以上（WCAG 2.2 AA） */
+  --c-tour: #a35a2a;
   --c-meta: #5a49b8;
-  --c-academy: #3f8a5f;
-  --c-channel: #c0463b;
-  --c-theater: #9a7420;
-  --c-market: #3c7fb1;
-  --c-fund: #2f8c80;
+  --c-academy: #377853;
+  --c-channel: #bc453a;
+  --c-theater: #89671c;
+  --c-market: #36719e;
+  --c-fund: #29796f;
+
+  /* 意味色：デジタル庁デザインシステムのトークン値 */
+  --success: #197a4b;       /* color-semantic-success-2 */
+  --error: #ce0000;         /* color-semantic-error-2 */
+  --warning: #c74700;       /* color-semantic-warning-orange-2 */
+  --focus-ring: #0017c1;    /* color-key-900（primitive blue-900） */
+
+  /* 角丸：Material 3 の shape scale */
+  --shape-xs: 4px;   /* corner-extra-small：入力欄・印 */
+  --shape-sm: 8px;   /* corner-small：チップ */
+  --shape-md: 12px;  /* corner-medium：カード */
+  --shape-lg: 16px;  /* corner-large：大きな面 */
+  --shape-xl: 28px;  /* corner-extra-large */
+  --shape-full: 9999px; /* corner-full：ボタン */
+
+  /* 動き：Material 3 の easing / duration */
+  --ease-standard: cubic-bezier(.2, 0, 0, 1);
+  --ease-emph-decel: cubic-bezier(.05, .7, .1, 1);
+  --dur-short: 200ms;    /* duration-short4 */
+  --dur-medium: 300ms;   /* duration-medium2 */
+  --dur-long: 500ms;     /* duration-long2 */
+
+  /* 影：デジタル庁デザインシステムの elevation トークン */
+  --elevation-1: 0 2px 8px 1px rgba(0,0,0,.1), 0 1px 5px 0 rgba(0,0,0,.3);
+  --elevation-2: 0 2px 12px 2px rgba(0,0,0,.1), 0 1px 6px 0 rgba(0,0,0,.3);
+  --elevation-4: 0 6px 20px 4px rgba(0,0,0,.1), 0 2px 6px 0 rgba(0,0,0,.3);
 
   /* 書体：見出し＝明朝、本文＝やわらかいゴシック、英字ラベル＝等幅 */
   --font-display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
-  --font: "Zen Kaku Gothic New", system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  --font: "Noto Sans JP", system-ui, -apple-system, "Hiragino Sans", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
 
   --radius: 4px;
@@ -246,7 +274,7 @@ button { cursor: pointer; }
   background: conic-gradient(from -20deg,
     var(--ki) 0 22%, transparent 22% 24%,
     var(--aomidori) 24% 47%, transparent 47% 49%,
-    var(--shu) 49% 72%, transparent 72% 74%,
+    var(--ring-shu) 49% 72%, transparent 72% 74%,
     var(--ai) 74% 97%, transparent 97% 100%);
   -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
           mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
@@ -421,7 +449,7 @@ button { cursor: pointer; }
 .price small { font-size: 12px; font-weight: 500; color: var(--text-sub); margin-left: 2px; }
 .lang { display: flex; gap: 4px; flex-wrap: wrap; }
 .lang span { font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--line); border-radius: 2px; padding: 0 6px; }
-.stars { color: #b8860b; font-size: 13px; font-weight: 700; }
+.stars { color: #8d6608; font-size: 13px; font-weight: 700; }
 
 /* 写真の光と質感をそろえる：左上から光、下に影 */
 .card__thumb::after, .video__thumb::after, .poster::after {
@@ -529,7 +557,7 @@ button { cursor: pointer; }
 .tag-auction { color: var(--c-market); font-weight: 900; font-size: 12px; }
 .tag-buy { color: var(--c-academy); font-weight: 900; font-size: 12px; }
 .bids { font-size: 12px; color: var(--text-sub); }
-.ends { font-family: var(--font-mono); font-size: 12px; color: #c8382c; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ends { font-family: var(--font-mono); font-size: 12px; color: var(--error); font-weight: 600; font-variant-numeric: tabular-nums; }
 .ends.is-soon { animation: blink 1s steps(2) infinite; }
 @keyframes blink { 50% { opacity: .45; } }
 .watch {
@@ -566,8 +594,8 @@ button { cursor: pointer; }
 .fund__nums span { font-size: 11px; color: var(--text-sub); }
 .fund__risk { font-size: 12px; }
 .fund__risk b { display: inline-block; padding: 0 8px; border-radius: 2px; color: #fff; }
-.fund__risk b[data-r="中"] { background: #c27a12; }
-.fund__risk b[data-r="高"] { background: #c8382c; }
+.fund__risk b[data-r="中"] { background: var(--warning); }
+.fund__risk b[data-r="高"] { background: var(--error); }
 .fund__body .btn { margin-top: auto; }
 
 .sim { margin-top: 40px; background: var(--surface); border-radius: var(--radius); padding: 28px 20px; display: grid; gap: 24px; }
@@ -599,9 +627,9 @@ button { cursor: pointer; }
 }
 .venn__c b { font-family: var(--font-display); font-weight: 800; font-size: clamp(16px, 4vw, 22px); letter-spacing: .06em; line-height: 1.4; }
 .venn__c span { font-size: 12px; opacity: .92; line-height: 1.5; }
-.venn__c--1 { left: 22%; top: 0; background: #4f8f74; padding-bottom: 22%; }
-.venn__c--2 { left: 0; bottom: 0; background: #4a90b5; padding-right: 20%; padding-top: 16%; }
-.venn__c--3 { right: 0; bottom: 0; background: #e0715c; padding-left: 20%; padding-top: 16%; }
+.venn__c--1 { left: 22%; top: 0; background: #417660; padding-bottom: 22%; }
+.venn__c--2 { left: 0; bottom: 0; background: #3b7391; padding-right: 20%; padding-top: 16%; }
+.venn__c--3 { right: 0; bottom: 0; background: var(--shu); padding-left: 20%; padding-top: 16%; }
 .venn__core {
   position: absolute; left: 50%; top: 57%; transform: translate(-50%, -50%);
   background: var(--surface); color: var(--text); padding: 4px 10px; border-radius: 2px;
@@ -653,7 +681,7 @@ button { cursor: pointer; }
 @media (max-width: 767px) { .join__arc { --arc-w: 170vw; border-radius: 50% 50% 0 0 / 60% 60% 0 0; } }
 .join__title { font-family: var(--font-display); font-weight: 800; font-size: clamp(24px, 4vw, 38px); letter-spacing: .08em; }
 :root[lang="en"] .join__title { letter-spacing: 0; }
-.join__inner > p:not(.join__msg) { margin-top: 12px; color: rgba(255,255,255,.9); }
+.join__inner > p:not(.join__msg) { margin-top: 12px; color: #fff; }
 .join__form { margin: 28px auto 0; display: flex; flex-wrap: wrap; gap: 10px; max-width: 540px; }
 .join__form input { flex: 1 1 240px; min-width: 0; min-height: 52px; padding: 0 20px; border-radius: 2px; border: 0; color: #111; background: #fff; }
 .join__form .btn { flex: 1 1 180px; }
@@ -708,3 +736,88 @@ button { cursor: pointer; }
   .concept__stamps li { width: 40px; height: 40px; font-size: 18px; }
 }
 .join__form .btn { flex: 1 1 240px; }
+
+
+/* =========================================================
+   デザインシステム層
+   ・デジタル庁デザインシステム（@digital-go-jp/design-tokens 2.1.0）
+     ：文字サイズの段階、行間、意味色、影、アクセシビリティ
+   ・Material Design 3（@material/web 2.5.0 の md-sys トークン）
+     ：角丸の段階、状態レイヤー、動き
+   ========================================================= */
+
+/* ---------- 文字：デジタル庁の文字サイズ段階（14〜64px）と行間（〜1.75） ---------- */
+body { line-height: 1.75; }                         /* line-height-175 */
+h1, h2, h3 { line-height: 1.4; }                    /* line-height-140 */
+.section__lead, .concept__text, .hero__lead { font-size: 17px; line-height: 1.75; }  /* font-size-17 */
+@media (min-width: 1000px) { .hero__lead { line-height: 2.1; } }  /* 縦書きは列の間を広めに */
+.section__title { font-size: clamp(28px, 4.6vw, 45px); }           /* 28 → 45 */
+.card__title { line-height: 1.5; }
+
+/* 読ませる日本語は14px（font-size-14）を下限にする */
+.demo-bar, .card__meta, .card__label, .bids, .ends, .watch-count, .tag-auction, .tag-buy,
+.fund__nums span, .fund__risk, .sim__note, .sim__share, .sim__total, .risk ul, .flow p,
+.video__sub, .hero__stats span, .footer__copy, .footer__links, .footer__bottom,
+.meta__visited, .meta__features, .meta__desc, .venn__c span, .eco__item p, .roadmap p,
+.work p, .theater__hero p, .select, .fund__text, .card__text, .stars { font-size: 14px; }
+.poster__new { font-size: 12px; }
+
+/* ---------- 角丸：Material 3 の shape scale ---------- */
+.btn { border-radius: var(--shape-full); }
+.chip, .tab, .lang-toggle { border-radius: var(--shape-sm); }
+.card, .fund, .flow li, .roadmap li, .video__thumb, .poster, .meta__stage, .meta__info,
+.sim__out, .fund__nums div, .card__label { border-radius: var(--shape-md); }
+.card__label { border-radius: var(--shape-xs); }
+.sim, .theater__hero, .risk { border-radius: var(--shape-lg); }
+.channel__search input, .join__form input, .select select, .sim__body select { border-radius: var(--shape-xs); }
+.badge, .logo__mark, .concept__stamps li, .nav a:not(.btn) i, .fund__risk b, .lang span, .poster__new, .video__time { border-radius: var(--shape-xs); }
+.roadmap li { border-top: 0; box-shadow: inset 0 3px 0 var(--text); }
+.toast { border-radius: var(--shape-sm); }
+
+/* ---------- 状態レイヤー：Material 3（hover .08 / focus .12 / pressed .12） ---------- */
+.btn, .chip, .tab, .lang-toggle, .watch, .meta__pad button, .faq summary, .work__arrow, .to-top {
+  --state: 0%;
+  background-image: linear-gradient(color-mix(in srgb, currentColor var(--state), transparent) 0 0);
+  transition: background-color var(--dur-short) var(--ease-standard), border-color var(--dur-short) var(--ease-standard),
+    color var(--dur-short) var(--ease-standard), box-shadow var(--dur-short) var(--ease-standard);
+}
+.btn:hover, .chip:hover, .tab:hover, .lang-toggle:hover, .watch:hover, .meta__pad button:hover, .faq summary:hover, .to-top:hover { --state: 8%; }
+.btn:focus-visible, .chip:focus-visible, .tab:focus-visible, .lang-toggle:focus-visible, .watch:focus-visible, .faq summary:focus-visible, .to-top:focus-visible { --state: 12%; }
+.btn:active, .chip:active, .tab:active, .lang-toggle:active, .watch:active, .meta__pad button:active, .faq summary:active, .to-top:active { --state: 12%; }
+.btn:hover { transform: none; }
+.card:hover { transform: none; box-shadow: var(--elevation-1); }
+
+/* ---------- 動き：Material 3 の easing / duration ---------- */
+.card, .video__thumb, .poster { transition: box-shadow var(--dur-medium) var(--ease-standard), transform var(--dur-medium) var(--ease-standard); }
+.work::before { transition: transform var(--dur-long) var(--ease-standard); }
+.toast { transition: transform var(--dur-medium) var(--ease-emph-decel), opacity var(--dur-medium) var(--ease-standard); }
+.reveal.is-anim { animation: rise var(--dur-long) var(--ease-emph-decel) both; }
+
+/* ---------- 影：デジタル庁の elevation（重なる部品だけに使う） ---------- */
+.toast { box-shadow: var(--elevation-4); }
+.to-top, .watch { box-shadow: var(--elevation-2); }
+.venn__core { box-shadow: var(--elevation-1); }
+
+/* ---------- フォーカス：どの背景でも見える二重の輪 ---------- */
+:focus-visible { outline: 2px solid #fff; outline-offset: 0; box-shadow: 0 0 0 4px var(--focus-ring); }
+.section--dark :focus-visible, .section--theater :focus-visible, .work:focus-visible { box-shadow: 0 0 0 4px #ffd43d; outline-color: #1d1d1f; }
+
+/* ---------- フォーム：見えるラベルと、エラーの伝え方 ---------- */
+.field-label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.channel__search .field-label { color: var(--text); }
+.join__form { align-items: flex-end; }
+.join__field { flex: 1 1 260px; min-width: 0; text-align: left; }
+.join__field .field-label { color: #fff; }
+.join__field input { width: 100%; border: 2px solid transparent; }
+.join__field input[aria-invalid="true"] { border-color: #ffd43d; }
+.join__msg { font-weight: 700; }
+.join__msg.is-error::before { content: "⚠ "; }
+.join__hint { margin-top: 6px; font-size: 14px; color: #fff; text-align: left; }
+
+/* ---------- 意味色のダークモード対応（暗い背景でも 4.5:1 以上） ---------- */
+:root { --star: #8d6608; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --error: #ff8a80; --warning: #c74700; --star: #e8c15a; } }
+:root[data-theme="dark"] { --error: #ff8a80; --warning: #c74700; --star: #e8c15a; }
+.stars { color: var(--star); }
+.watch-count b { color: var(--error); }
+.fund__risk b[data-r="高"] { background: #ce0000; }

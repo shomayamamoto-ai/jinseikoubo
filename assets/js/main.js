@@ -550,11 +550,18 @@
     e.preventDefault();
     const input = $("#joinEmail");
     const msg = $("#joinMsg");
+    // エラーは「何が問題か」と「どう直すか」を、入力欄と結びつけて伝える
     if (!input.value || !input.checkValidity()) {
-      msg.textContent = tr("メールアドレスの形式をご確認ください。", "Please check that your email address is correct.");
+      input.setAttribute("aria-invalid", "true");
+      msg.classList.add("is-error");
+      msg.textContent = !input.value
+        ? tr("メールアドレスを入力してください。", "Please enter your email address.")
+        : tr("メールアドレスの形式が正しくありません。「name@example.com」のように入力してください。", "That email address doesn't look right. Use a format like name@example.com.");
       input.focus();
       return;
     }
+    input.removeAttribute("aria-invalid");
+    msg.classList.remove("is-error");
     msg.textContent = tr("ありがとうございます！（デモのため、実際には送信・保存されていません）", "Thank you! (This is a demo, so nothing was sent or saved.)");
     input.value = "";
   });
@@ -639,8 +646,8 @@
 
     ["#channel .section__title", "Koubo Channel: everyone can be a creator"],
     ["#channel .section__lead", "Artisan craft, travel diaries, research explainers: anyone can post videos. Creators are planned to earn from ads and from fans' tips."],
-    ["#videoSearch", "Search videos (e.g. pottery, Kyoto, research)", "placeholder"],
-    ["#videoSearch", "Search videos", "aria-label"],
+    ["#videoSearch", "e.g. pottery, Kyoto, research", "placeholder"],
+    ['label[for="videoSearch"]', "Search videos"],
     ["#videoEmpty", "No videos match your search."],
 
     ["#theater .section__title", "Koubo Theater: unlimited originals"],
@@ -717,7 +724,7 @@
     [".join__title", "Be one of the first<br class=\"sp\"> members of Jinsei Koubo"],
     [".join__inner > p:not(.join__msg)", "Get launch news and early-access invitations."],
     ['label[for="joinEmail"]', "Email address"],
-    ["#joinEmail", "Email address", "placeholder"],
+    ["#joinEmail", "e.g. name@example.com", "placeholder"],
     [".join__form .btn", "Sign up for launch news"],
 
     [".footer__copy", "Travel. Learn. Play. Make. Back the future."],
