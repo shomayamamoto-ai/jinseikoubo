@@ -170,7 +170,7 @@
         </div>
         <p class="swipe-hint" data-i18n="ui.swipe">横にスワイプして見る</p>
         <div class="card-grid" id="tourList"></div>
-        <div class="itinerary">
+        <div class="itinerary" data-detail>
           <h3 class="sub-title" data-i18n="tour.it.title">モデル行程：京都・宇治で茶師と過ごす一日</h3>
           <ol class="timeline">
             <li><time>9:30</time><div><span data-i18n="tour.it.0"><b>宇治駅に集合</b><p>英語ガイドと合流し、1日の流れを確認します。</p></span></div></li>
@@ -225,7 +225,7 @@
     </section>
 
     <!-- ===== 03 ACADEMY ===== -->
-    <section class="section" id="academy" style="--c:var(--c-academy)">
+    <section class="section" id="academy" data-detail style="--c:var(--c-academy)">
       <div class="container">
         <header class="section__head section__head--left">
           <p class="section__en"><span class="badge" aria-hidden="true">学</span>ACADEMY</p>
@@ -246,7 +246,7 @@
     </section>
 
     <!-- ===== 04 CHANNEL ===== -->
-    <section class="section section--tint" id="channel" style="--c:var(--c-channel)">
+    <section class="section section--tint" id="channel" data-detail style="--c:var(--c-channel)">
       <div class="container">
         <header class="section__head section__head--left">
           <p class="section__en"><span class="badge" aria-hidden="true">発</span>CHANNEL</p>
@@ -269,7 +269,7 @@
     </section>
 
     <!-- ===== 05 THEATER ===== -->
-    <section class="section section--theater" id="theater" style="--c:var(--c-theater)">
+    <section class="section section--theater" id="theater" data-detail style="--c:var(--c-theater)">
       <div class="container">
         <header class="section__head section__head--left">
           <p class="section__en"><span class="badge" aria-hidden="true">観</span>THEATER</p>
@@ -295,7 +295,7 @@
     </section>
 
     <!-- ===== 06 MARKET ===== -->
-    <section class="section" id="market" style="--c:var(--c-market)">
+    <section class="section" id="market" data-detail style="--c:var(--c-market)">
       <div class="container">
         <header class="section__head section__head--left">
           <p class="section__en"><span class="badge" aria-hidden="true">市</span>MARKET</p>
@@ -312,6 +312,7 @@
             <button class="chip" data-mfilter="buy">即決</button>
           </div>
           <p class="watch-count">お気に入り <b id="watchCount">0</b>件</p>
+          <button class="cart-btn" id="cartBtn" type="button" data-flow="cart">カート <b id="cartCount">0</b></button>
           <label class="select">
             <span>並び替え</span>
             <select id="marketSort">
@@ -323,7 +324,7 @@
         </div>
         <p class="swipe-hint" data-i18n="ui.swipe">横にスワイプして見る</p>
         <div class="card-grid card-grid--4" id="marketList"></div>
-        <div class="safety">
+        <div class="safety" data-detail>
           <h3 class="sub-title" data-i18n="mk.safe.title">安心して売り買いできるしくみ（構想）</h3>
           <ul class="feature-grid">
             <li class="feature"><span data-i18n="mk.safe.0"><b>本人確認</b><p>出品できるのは、本人確認を済ませた人だけです。</p></span></li>
@@ -358,7 +359,7 @@
         <p class="swipe-hint" data-i18n="ui.swipe">横にスワイプして見る</p>
         <div class="fund-grid" id="fundList"></div>
 
-        <div class="sim">
+        <div class="sim" data-detail>
           <div>
             <h3 class="sim__title">支援シミュレーター</h3>
             <p class="sim__note">案件と口数を選ぶと、支援額の合計と、目標金額に占める割合を確認できます（デモ用の計算です）。</p>
@@ -373,11 +374,11 @@
             <p class="sim__total">支援額<strong id="simTotal">¥10,000</strong></p>
             <p class="sim__share">目標金額に占める割合 <b id="simShare">0.03%</b></p>
             <p class="sim__share">達成までの残り <b id="simRemain">¥0</b></p>
-            <button class="btn btn--primary btn--block" data-toast="デモのため申込はできません">申込内容を確認する（デモ）</button>
+            <button class="btn btn--primary btn--block" data-flow="fund">申込内容を確認する（デモ）</button>
           </div>
         </div>
 
-        <div class="learn">
+        <div class="learn" data-detail>
           <h3 class="sub-title" data-i18n="fund.learn.title">研究テーマを知る</h3>
           <div class="learn-grid">
             <article class="learn-card">

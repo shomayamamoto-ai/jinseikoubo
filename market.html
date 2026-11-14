@@ -110,7 +110,7 @@
     </section>
 
     <!-- ===== 06 MARKET ===== -->
-    <section class="section" id="market" style="--c:var(--c-market)">
+    <section class="section" id="market" data-detail style="--c:var(--c-market)">
       <div class="container">
         <header class="section__head section__head--left">
           <p class="section__en"><span class="badge" aria-hidden="true">市</span>MARKET</p>
@@ -126,6 +126,7 @@
             <button class="chip" data-mfilter="buy">即決</button>
           </div>
           <p class="watch-count">お気に入り <b id="watchCount">0</b>件</p>
+          <button class="cart-btn" id="cartBtn" type="button" data-flow="cart">カート <b id="cartCount">0</b></button>
           <label class="select">
             <span>並び替え</span>
             <select id="marketSort">
@@ -137,7 +138,7 @@
         </div>
         <p class="swipe-hint" data-i18n="ui.swipe">横にスワイプして見る</p>
         <div class="card-grid card-grid--4" id="marketList"></div>
-        <div class="safety">
+        <div class="safety" data-detail>
           <h3 class="sub-title" data-i18n="mk.safe.title">安心して売り買いできるしくみ（構想）</h3>
           <ul class="feature-grid">
             <li class="feature"><span data-i18n="mk.safe.0"><b>本人確認</b><p>出品できるのは、本人確認を済ませた人だけです。</p></span></li>

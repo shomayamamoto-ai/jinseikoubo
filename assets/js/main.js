@@ -27,6 +27,11 @@
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
   // このページにその部品があるか（トップページと詳細ページで同じスクリプトを使うため）
   const has = (sel) => !!document.querySelector(sel);
+  // トップページは要点だけを見せる（全件は各サービスの詳細ページで）
+  const isTop = has("main > .hero");
+  const topN = (list, n) => (isTop ? list.slice(0, n) : list);
+  // 描画する必要があるか（このページにあり、トップで隠している部分ではない）
+  const live = (sel) => { const el = document.querySelector(sel); return !!el && !(isTop && el.closest("[data-detail]")); };
   const yen = (n) => "¥" + n.toLocaleString("ja-JP");
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -101,6 +106,7 @@
     if (!has("#tourList")) return;
     $("#tourList").innerHTML = tours
       .filter((t) => tourArea === "all" || t.area === tourArea)
+      .slice(0, isTop ? 3 : undefined)
       .map((t) => { const d = t[lang]; return `
         <article class="card reveal">
           <div class="card__thumb" style="--thumb:${t.bg}">${JKArt.thumb(t.emoji, { pattern: "seigaiha" })}<span class="card__label">${esc(d.days)}</span></div>
@@ -110,7 +116,7 @@
             <div class="lang" aria-label="${tr("対応言語", "Guide languages")}">${t.lang.map((l) => `<span>${esc(l)}</span>`).join("")}</div>
             <div class="card__foot">
               <p class="price">${yen(t.price)}<small>${tr("／人〜", " / person")}</small></p>
-              <button class="btn btn--primary btn--sm" data-toast="${T.demoBook()}">${tr("空き日程を見る", "Check availability")}</button>
+              <button class="btn btn--primary btn--sm" data-flow="tour" data-id="${tours.indexOf(t)}">${tr("空き日程を見る", "Check availability")}</button>
             </div>
           </div>
         </article>`; }).join("");
@@ -153,9 +159,10 @@
   ];
   let courseType = "all";
   const renderCourses = () => {
-    if (!has("#courseList")) return;
+    if (!live("#courseList")) return;
     $("#courseList").innerHTML = courses
       .filter((c) => courseType === "all" || c.type === courseType)
+      .slice(0, isTop ? 4 : undefined)
       .map((c) => { const d = c[lang]; return `
         <article class="card reveal">
           <div class="card__thumb" style="--thumb:${c.bg}">${JKArt.thumb(c.emoji, { pattern: "shippo" })}
@@ -166,7 +173,7 @@
             <p class="stars" aria-label="${tr("評価", "Rating")} ${c.rate}">★ ${c.rate.toFixed(1)}</p>
             <div class="card__foot">
               <p class="price">${c.price === 0 ? tr("無料", "Free") : yen(c.price)}</p>
-              <button class="btn btn--primary btn--sm" data-toast="${T.demoEnroll()}">${c.type === "live" ? tr("参加を予約する", "Reserve a seat") : tr("講座の詳細を見る", "View course details")}</button>
+              <button class="btn btn--primary btn--sm" data-flow="course" data-id="${courses.indexOf(c)}">${c.type === "live" ? tr("参加を予約する", "Reserve a seat") : tr("講座の詳細を見る", "View course details")}</button>
             </div>
           </div>
         </article>`; }).join("");
@@ -202,11 +209,11 @@
       en: { title: "First look: Metaverse Workshop beta", ch: "Koubo Official", views: "19K views", ago: "12 hours ago", tags: "metaverse game official" } },
   ];
   const renderVideos = () => {
-    if (!has("#videoList")) return;
+    if (!live("#videoList")) return;
     const words = $("#videoSearch").value.trim().toLowerCase().split(/\s+/).filter(Boolean);
     // 日本語・英語のどちらで検索しても見つかるようにする
     const hay = (v) => [v.ja.title, v.ja.ch, v.ja.tags, v.en.title, v.en.ch, v.en.tags].join(" ").toLowerCase();
-    const list = videos.filter((v) => words.every((w) => hay(v).includes(w)));
+    const list = topN(videos.filter((v) => words.every((w) => hay(v).includes(w))), 3);
     $("#videoList").innerHTML = list.map((v) => { const d = v[lang]; return `
       <button class="video reveal" type="button" data-toast="${T.demoPlay()}">
         <div class="video__thumb" style="--thumb:${v.bg}">${JKArt.thumb(v.emoji, { pattern: "kikko", ratio: "16 / 9" })}<span class="video__time">${v.time}</span></div>
@@ -251,8 +258,8 @@
     ]},
   ];
   const renderTheater = () => {
-    if (!has("#theaterRows")) return;
-    $("#theaterRows").innerHTML = rows.map((r) => `
+    if (!live("#theaterRows")) return;
+    $("#theaterRows").innerHTML = topN(rows, 1).map((r) => `
       <div class="row">
         <h3 class="row__title">${esc(r[lang])}</h3>
         <div class="row__track" tabindex="0" aria-label="${esc(r[lang])}${tr("（横にスクロールできます）", " (scroll sideways)")}">
@@ -283,6 +290,14 @@
     { id: 8, kind: "buy", emoji: "🪆", bg: "linear-gradient(135deg,#f4a261,#e76f51)", ja: "メタバース工房 限定アバター衣装（デジタル）", en: "Metaverse Workshop avatar outfit (digital, limited)", seller: "koubo_official", price: 1200, end: now + 400 * H },
   ];
   let mFilter = "all";
+  // カート：この端末のブラウザにだけ保存（ページを移動しても残る）
+  const CART_KEY = "jinseikoubo-cart";
+  let cart = new Set();
+  try { cart = new Set(JSON.parse(localStorage.getItem(CART_KEY) || "[]")); } catch (_) { /* 保存不可の環境 */ }
+  const saveCart = () => {
+    try { localStorage.setItem(CART_KEY, JSON.stringify([...cart])); } catch (_) { /* 保存不可の環境 */ }
+    if (has("#cartCount")) $("#cartCount").textContent = cart.size;
+  };
   // お気に入りは、この端末のブラウザにだけ保存（使えない環境では保存しない）
   const WATCH_KEY = "jinseikoubo-watch";
   let watched = new Set();
@@ -301,11 +316,12 @@
   };
   const bidStep = (p) => (p < 10000 ? 500 : p < 30000 ? 1000 : 2000);
   const renderMarket = () => {
-    if (!has("#marketList")) return;
+    if (!live("#marketList")) return;
     const sort = $("#marketSort").value;
     const list = items
       .filter((i) => mFilter === "all" || i.kind === mFilter)
-      .sort((a, b) => sort === "low" ? a.price - b.price : sort === "high" ? b.price - a.price : a.end - b.end);
+      .sort((a, b) => sort === "low" ? a.price - b.price : sort === "high" ? b.price - a.price : a.end - b.end)
+      .slice(0, isTop ? 4 : undefined);
     $("#marketList").innerHTML = list.map((i) => { const title = i[lang]; const on = watched.has(i.id); return `
       <article class="card">
         <div class="card__thumb" style="--thumb:${i.bg}">${JKArt.thumb(i.emoji, { pattern: "ichimatsu" })}
@@ -321,7 +337,7 @@
           <div class="card__foot">
             ${i.kind === "auction"
               ? `<button class="btn btn--primary btn--sm btn--block" data-bid="${i.id}">${tr(`＋${yen(bidStep(i.price))} で入札（デモ）`, `Bid +${yen(bidStep(i.price))} (demo)`)}</button>`
-              : `<button class="btn btn--primary btn--sm btn--block" data-toast="${T.demoBuy()}">${tr("カートに入れる", "Add to cart")}</button>`}
+              : `<button class="btn btn--primary btn--sm btn--block" data-cart="${i.id}"${cart.has(i.id) ? " disabled" : ""}>${cart.has(i.id) ? tr("カートに入っています", "In your cart") : tr("カートに入れる", "Add to cart")}</button>`}
           </div>
         </div>
       </article>`; }).join("");
@@ -397,7 +413,7 @@
           </div>
           <p class="card__meta"><span>${tr("集まった金額", "Raised")} ${yen(p.raised)}</span><span>${tr("目標", "Goal")} ${yen(p.goal)}</span></p>
           <p class="fund__risk">${tr("リスク区分", "Risk level")} <b data-r="${riskLabel[p.risk][0]}">${tr(...riskLabel[p.risk])}</b></p>
-          <a class="btn btn--primary btn--sm" href="#simProject" data-pick="${p.id}">${tr("この案件で支援額を試算する", "Estimate my backing")}</a>
+          <a class="btn btn--primary btn--sm" href="${has("#simProject") && !isTop ? "#simProject" : "fund.html#simProject"}" data-pick="${p.id}">${tr("この案件で支援額を試算する", "Estimate my backing")}</a>
         </div>
       </article>`;
     }).join("");
@@ -634,6 +650,126 @@
 
   }
 
+
+  /* =======================================================
+     体験の流れ（予約・申込・カート・支援）
+     最後の確認画面まで実際に操作できる。送信・決済は行わない。
+     ======================================================= */
+  const dlg = document.createElement("dialog");
+  dlg.className = "flow-dlg";
+  dlg.setAttribute("aria-labelledby", "flowTitle");
+  dlg.innerHTML = `<div class="flow-dlg__inner"><header class="flow-dlg__head"><p class="flow-dlg__step" id="flowStep"></p><h2 id="flowTitle" tabindex="-1"></h2><button class="flow-dlg__close" type="button" data-close></button></header><div class="flow-dlg__body" id="flowBody"></div><footer class="flow-dlg__foot" id="flowFoot"></footer></div>`;
+  document.body.appendChild(dlg);
+  const closeFlow = () => { if (dlg.open) dlg.close(); };
+  let flow = null; // { kind, step, ... }
+  const fmtDate = (d) => d.toLocaleDateString(lang === "en" ? "en-US" : "ja-JP", { month: "short", day: "numeric", weekday: "short" });
+  const row = (k, v) => `<div class="sum__row"><dt>${k}</dt><dd>${v}</dd></div>`;
+  const demoNote = () => `<p class="flow-dlg__note">${tr("※デモのため、ここから先の送信・決済は行われません。", "* This is a demo. Nothing is sent or charged beyond this point.")}</p>`;
+  const done = (title, text, links) => {
+    $("#flowStep").textContent = tr("完了", "Done");
+    $("#flowTitle").textContent = title;
+    $("#flowBody").innerHTML = `<div class="flow-done"><span class="flow-done__seal" aria-hidden="true">済</span><p>${text}</p><p class="flow-dlg__note">${tr("デモのため、実際の予約・購入・支援・送信は行われていません。料金も発生しません。", "Because this is a demo, no real booking, purchase, backing or submission was made, and nothing was charged.")}</p></div>`;
+    $("#flowFoot").innerHTML = links + `<button class="btn btn--primary" type="button" data-close>${tr("閉じる", "Close")}</button>`;
+    $("#flowTitle").focus();
+  };
+  const renderFlow = () => {
+    const f = flow; if (!f) return;
+    dlg.querySelector(".flow-dlg__close").setAttribute("aria-label", tr("閉じる", "Close"));
+    const head = (n, total, title) => { $("#flowStep").textContent = tr(`ステップ ${n} / ${total}`, `Step ${n} of ${total}`); $("#flowTitle").textContent = title; };
+    const foot = (back, nextLabel, disabled) => { $("#flowFoot").innerHTML = (back ? `<button class="btn btn--line" type="button" data-back>${tr("戻る", "Back")}</button>` : "") + `<button class="btn btn--primary" type="button" data-next${disabled ? " disabled" : ""}>${nextLabel}</button>`; };
+
+    if (f.kind === "tour") {
+      const t = tours[f.id], d = t[lang];
+      if (f.step === 1) {
+        head(1, 3, tr("日程を選ぶ", "Choose a date"));
+        $("#flowBody").innerHTML = `<p class="flow-dlg__lead">${esc(d.title)}</p><div class="opt-list" role="radiogroup" aria-label="${tr("日程", "Date")}">${f.dates.map((x, i) => `
+          <label class="opt${x.left === 0 ? " is-off" : ""}"><input type="radio" name="flowDate" value="${i}"${f.date === i ? " checked" : ""}${x.left === 0 ? " disabled" : ""}><span class="opt__main">${fmtDate(x.d)}</span><span class="opt__sub">${x.left === 0 ? tr("満席", "Full") : tr(`残り${x.left}席`, `${x.left} seat${x.left === 1 ? "" : "s"} left`)}</span></label>`).join("")}</div>`;
+        foot(false, tr("人数の選択へ", "Next: group size"), f.date == null);
+      } else if (f.step === 2) {
+        const max = Math.min(6, f.dates[f.date].left);
+        f.n = Math.min(f.n, max);
+        head(2, 3, tr("人数を選ぶ", "Choose group size"));
+        $("#flowBody").innerHTML = `<p class="flow-dlg__lead">${fmtDate(f.dates[f.date].d)}・${tr(`最大${max}名まで`, `up to ${max} people`)}</p>
+          <div class="stepper"><button type="button" data-n="-1" aria-label="${tr("1人減らす", "One fewer")}"${f.n <= 1 ? " disabled" : ""}>−</button><output aria-live="polite">${f.n}<small>${tr("名", f.n === 1 ? " person" : " people")}</small></output><button type="button" data-n="1" aria-label="${tr("1人増やす", "One more")}"${f.n >= max ? " disabled" : ""}>＋</button></div>
+          <p class="flow-total">${tr("合計", "Total")}<strong>${yen(t.price * f.n)}</strong><small>${yen(t.price)} × ${f.n}</small></p>`;
+        foot(true, tr("予約内容の確認へ", "Next: review"));
+      } else {
+        head(3, 3, tr("予約内容を確認する", "Review your booking"));
+        $("#flowBody").innerHTML = `<dl class="sum">${row(tr("ツアー", "Tour"), esc(d.title))}${row(tr("日程", "Date"), fmtDate(f.dates[f.date].d))}${row(tr("人数", "Group size"), f.n + tr("名", f.n === 1 ? " person" : " people"))}${row(tr("ガイドの言語", "Guide languages"), t.lang.join(" / "))}${row(tr("合計", "Total"), `<b>${yen(t.price * f.n)}</b>`)}</dl>${demoNote()}`;
+        foot(true, tr("この内容で予約する（デモ）", "Confirm booking (demo)"));
+      }
+    } else if (f.kind === "course") {
+      const c = courses[f.id], d = c[lang], live = c.type === "live";
+      if (f.step === 1) {
+        head(1, 2, tr("講座の内容", "About this course"));
+        $("#flowBody").innerHTML = `<p class="flow-dlg__lead">${esc(d.title)}</p><dl class="sum">${row(tr("形式", "Format"), live ? tr("ライブ（リアルタイムで参加）", "Live (join in real time)") : tr("録画（いつでも視聴）", "Recorded (watch anytime)"))}${row(tr("講師", "Instructor"), esc(d.teacher))}${row(live ? tr("開催日時", "Date and time") : tr("ボリューム", "Length"), esc(d.time))}${row(tr("評価", "Rating"), "★ " + c.rate.toFixed(1))}${row(tr("受講料", "Fee"), `<b>${c.price === 0 ? tr("無料", "Free") : yen(c.price)}</b>`)}</dl>`;
+        foot(false, live ? tr("参加の確認へ", "Next: review") : tr("受講の確認へ", "Next: review"));
+      } else {
+        head(2, 2, tr("申込内容を確認する", "Review your enrollment"));
+        $("#flowBody").innerHTML = `<dl class="sum">${row(tr("講座", "Course"), esc(d.title))}${row(tr("受講料", "Fee"), `<b>${c.price === 0 ? tr("無料", "Free") : yen(c.price)}</b>`)}${row(tr("修了後", "On completion"), tr("デジタル修了証を発行（予定）", "Digital certificate issued (planned)"))}</dl>${demoNote()}`;
+        foot(true, live ? tr("この内容で参加を予約する（デモ）", "Reserve my seat (demo)") : tr("この内容で受講を始める（デモ）", "Start this course (demo)"));
+      }
+    } else if (f.kind === "cart") {
+      const list = items.filter((i) => cart.has(i.id));
+      const total = list.reduce((s, i) => s + i.price, 0);
+      $("#flowStep").textContent = tr(`${list.length}点`, `${list.length} item${list.length === 1 ? "" : "s"}`);
+      $("#flowTitle").textContent = tr("カート", "Your cart");
+      $("#flowBody").innerHTML = list.length ? `<ul class="cart-list">${list.map((i) => `<li><span class="cart-list__thumb" style="--thumb:${i.bg}">${JKArt.thumb(i.emoji, { pattern: "ichimatsu" })}</span><span class="cart-list__name">${esc(i[lang])}<small>${tr("出品者：", "Seller: ")}${esc(i.seller)}</small></span><b>${yen(i.price)}</b><button type="button" class="cart-list__del" data-del="${i.id}" aria-label="${esc(tr(`「${i[lang]}」をカートから削除`, `Remove "${i[lang]}" from cart`))}">×</button></li>`).join("")}</ul>
+        <p class="flow-total">${tr("合計（送料込み）", "Total (shipping included)")}<strong>${yen(total)}</strong></p>${demoNote()}`
+        : `<p class="flow-dlg__empty">${tr("カートは空です。即決価格の商品の「カートに入れる」を押すと、ここに入ります。", "Your cart is empty. Press “Add to cart” on a Buy It Now item to add it here.")}</p>`;
+      $("#flowFoot").innerHTML = list.length ? `<button class="btn btn--line" type="button" data-close>${tr("買い物を続ける", "Keep shopping")}</button><button class="btn btn--primary" type="button" data-next>${tr("購入手続きへ進む（デモ）", "Proceed to checkout (demo)")}</button>` : `<button class="btn btn--primary" type="button" data-close>${tr("閉じる", "Close")}</button>`;
+    } else if (f.kind === "fund") {
+      const p = projects.find((x) => x.id === f.pid) || projects[0], d = p[lang];
+      head(1, 1, tr("支援内容を確認する", "Review your backing"));
+      $("#flowBody").innerHTML = `<dl class="sum">${row(tr("案件", "Project"), esc(d.title))}${row(tr("口数", "Units"), tr(`${f.units}口`, `${f.units}`))}${row(tr("リスク区分", "Risk level"), tr(...riskLabel[p.risk]))}${row(tr("支援額", "Amount"), `<b>${yen(f.units * UNIT)}</b>`)}</dl>
+        <label class="agree"><input type="checkbox" id="flowAgree"${f.agree ? " checked" : ""}><span>${tr("研究は成功が保証されたものではなく、支援したお金が戻らない可能性があることを理解しました。", "I understand that research is not guaranteed to succeed and that I may not get my money back.")}</span></label>${demoNote()}`;
+      foot(false, tr("この内容で支援する（デモ）", "Confirm backing (demo)"), !f.agree);
+    }
+  };
+  const openFlow = (f) => { flow = f; renderFlow(); if (!dlg.open) dlg.showModal(); $("#flowTitle").focus(); };
+  const finishFlow = () => {
+    const f = flow;
+    if (f.kind === "tour") done(tr("予約の流れを体験しました", "You've tried the booking flow"), tr(`「${tours[f.id][lang].title}」を、${fmtDate(f.dates[f.date].d)}・${f.n}名で予約する流れでした。`, `That was the flow for booking “${tours[f.id][lang].title}” on ${fmtDate(f.dates[f.date].d)} for ${f.n}.`), `<a class="btn btn--line" href="academy.html">${tr("関連する講座を見る", "Browse related courses")}</a>`);
+    else if (f.kind === "course") done(tr("申込の流れを体験しました", "You've tried the enrollment flow"), tr(`「${courses[f.id][lang].title}」に申し込む流れでした。`, `That was the flow for enrolling in “${courses[f.id][lang].title}.”`), `<a class="btn btn--line" href="channel.html">${tr("工房チャンネルを見る", "Visit Koubo Channel")}</a>`);
+    else if (f.kind === "cart") { const n = cart.size; cart.clear(); saveCart(); renderMarket(); done(tr("購入の流れを体験しました", "You've tried the checkout flow"), tr(`${n}点の商品を購入する流れでした。カートは空に戻しました。`, `That was the flow for buying ${n} item${n === 1 ? "" : "s"}. Your cart has been emptied.`), ""); }
+    else if (f.kind === "fund") done(tr("支援の流れを体験しました", "You've tried the backing flow"), tr(`${f.units}口（${yen(f.units * UNIT)}）を支援する流れでした。`, `That was the flow for backing ${f.units} unit${f.units === 1 ? "" : "s"} (${yen(f.units * UNIT)}).`), "");
+    flow = null;
+  };
+  dlg.addEventListener("click", (e) => {
+    if (e.target === dlg || e.target.closest("[data-close]")) return closeFlow();
+    const f = flow; if (!f) return;
+    const nb = e.target.closest("[data-n]");
+    if (nb) { f.n += Number(nb.dataset.n); renderFlow(); dlg.querySelector(`[data-n="${nb.dataset.n}"]:not(:disabled)`)?.focus(); return; }
+    const del = e.target.closest("[data-del]");
+    if (del) { cart.delete(Number(del.dataset.del)); saveCart(); renderMarket(); renderFlow(); $("#flowTitle").focus(); return; }
+    if (e.target.closest("[data-back]")) { f.step--; renderFlow(); $("#flowTitle").focus(); return; }
+    if (e.target.closest("[data-next]")) {
+      const last = { tour: 3, course: 2, cart: 1, fund: 1 }[f.kind];
+      if ((f.step || 1) >= last) finishFlow(); else { f.step++; renderFlow(); $("#flowTitle").focus(); }
+    }
+  });
+  dlg.addEventListener("change", (e) => {
+    if (!flow) return;
+    if (e.target.name === "flowDate") { flow.date = Number(e.target.value); dlg.querySelector("[data-next]").disabled = false; }
+    if (e.target.id === "flowAgree") { flow.agree = e.target.checked; dlg.querySelector("[data-next]").disabled = !flow.agree; }
+  });
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-flow]");
+    if (b) {
+      const kind = b.dataset.flow, id = Number(b.dataset.id);
+      if (kind === "tour") {
+        // 空き日程：1週間後から、数日おきに6日分（残席はツアーごとに決まった値）
+        const dates = [...Array(6)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() + 7 + i * 3 + (id % 3)); return { d, left: [4, 0, 6, 2, 5, 1][(i + id) % 6] }; });
+        openFlow({ kind, id, step: 1, dates, date: null, n: 2 });
+      } else if (kind === "course") openFlow({ kind, id, step: 1 });
+      else if (kind === "cart") openFlow({ kind, step: 1 });
+      else if (kind === "fund") openFlow({ kind, step: 1, pid: $("#simProject").value, units: Number($("#simUnits").value), agree: false });
+      return;
+    }
+    const c = e.target.closest("[data-cart]");
+    if (c) { cart.add(Number(c.dataset.cart)); saveCart(); renderMarket(); toast(tr("カートに入れました", "Added to your cart")); $("#cartBtn")?.classList.add("is-bump"); setTimeout(() => $("#cartBtn")?.classList.remove("is-bump"), 400); }
+  });
+
   /* ---------- 事前登録フォーム ---------- */
   $("#joinForm")?.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -771,7 +907,6 @@
     [".sim__share:nth-of-type(2)", 'Share of the goal <b id="simShare">0.03%</b>'],
     [".sim__share:nth-of-type(3)", 'Remaining to reach the goal <b id="simRemain">¥0</b>'],
     [".sim__out .btn", "Review my backing (demo)"],
-    [".sim__out .btn", "Backing is not available in this demo", "data-toast"],
     [".risk h3", "Please note (concept stage)"],
     [".risk li:nth-child(1)", "Research and development is never guaranteed to succeed. You may not get your money back."],
     [".risk li:nth-child(2)", "If the fund offers financial returns such as dividends, registration under Japan's Financial Instruments and Exchange Act may be required. We will consult experts and the relevant authorities before any official launch."],
@@ -832,6 +967,7 @@
     ['.more-link[href="market.html"]', "More about the market"],
     ['.more-link[href="fund.html"]', "More about the research fund"],
     [".m-cta .btn", "Go to sign-up"],
+    ["#cartBtn", 'Cart <b id="cartCount">0</b>'],
     ["#metaEnter", "Enter area"],
     ["#metaverse .section__lead", "Walk through a virtual “workshop town” as an avatar and join games and events. In the mini demo below, use the arrow keys, or click or tap where you want to walk. Step into an area and press “Enter” to go to that page."],
   ];
@@ -927,6 +1063,8 @@
     renderFund();
     updateSim();
     saveWatch();
+    saveCart();
+    closeFlow();
     showZoneInfo();
     draw(0);
   };
