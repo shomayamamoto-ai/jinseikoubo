@@ -25,6 +25,8 @@
     window.addEventListener("load", toTop, { once: true });
   })();
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+  // このページにその部品があるか（トップページと詳細ページで同じスクリプトを使うため）
+  const has = (sel) => !!document.querySelector(sel);
   const yen = (n) => "¥" + n.toLocaleString("ja-JP");
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -96,11 +98,12 @@
   ];
   let tourArea = "all";
   const renderTours = () => {
+    if (!has("#tourList")) return;
     $("#tourList").innerHTML = tours
       .filter((t) => tourArea === "all" || t.area === tourArea)
       .map((t) => { const d = t[lang]; return `
         <article class="card reveal">
-          <div class="card__thumb" style="--thumb:${t.bg}"><span aria-hidden="true">${t.emoji}</span><span class="card__label">${esc(d.days)}</span></div>
+          <div class="card__thumb" style="--thumb:${t.bg}">${JKArt.thumb(t.emoji, { pattern: "seigaiha" })}<span class="card__label">${esc(d.days)}</span></div>
           <div class="card__body">
             <h3 class="card__title">${esc(d.title)}</h3>
             <p class="card__text">${esc(d.text)}</p>
@@ -150,11 +153,12 @@
   ];
   let courseType = "all";
   const renderCourses = () => {
+    if (!has("#courseList")) return;
     $("#courseList").innerHTML = courses
       .filter((c) => courseType === "all" || c.type === courseType)
       .map((c) => { const d = c[lang]; return `
         <article class="card reveal">
-          <div class="card__thumb" style="--thumb:${c.bg}"><span aria-hidden="true">${c.emoji}</span>
+          <div class="card__thumb" style="--thumb:${c.bg}">${JKArt.thumb(c.emoji, { pattern: "shippo" })}
             <span class="card__label ${c.type === "live" ? "card__label--live" : ""}">${c.type === "live" ? "● LIVE" : tr("録画講座", "On demand")}</span></div>
           <div class="card__body">
             <h3 class="card__title">${esc(d.title)}</h3>
@@ -198,15 +202,16 @@
       en: { title: "First look: Metaverse Workshop beta", ch: "Koubo Official", views: "19K views", ago: "12 hours ago", tags: "metaverse game official" } },
   ];
   const renderVideos = () => {
+    if (!has("#videoList")) return;
     const words = $("#videoSearch").value.trim().toLowerCase().split(/\s+/).filter(Boolean);
     // 日本語・英語のどちらで検索しても見つかるようにする
     const hay = (v) => [v.ja.title, v.ja.ch, v.ja.tags, v.en.title, v.en.ch, v.en.tags].join(" ").toLowerCase();
     const list = videos.filter((v) => words.every((w) => hay(v).includes(w)));
     $("#videoList").innerHTML = list.map((v) => { const d = v[lang]; return `
       <button class="video reveal" type="button" data-toast="${T.demoPlay()}">
-        <div class="video__thumb" style="--thumb:${v.bg}"><span aria-hidden="true">${v.emoji}</span><span class="video__time">${v.time}</span></div>
+        <div class="video__thumb" style="--thumb:${v.bg}">${JKArt.thumb(v.emoji, { pattern: "kikko", ratio: "16 / 9" })}<span class="video__time">${v.time}</span></div>
         <div class="video__info">
-          <span class="video__avatar" aria-hidden="true">${v.av}</span>
+          <span class="video__avatar" aria-hidden="true">${v.av === "工" ? "工" : JKArt.icon(v.av, 22)}</span>
           <div>
             <p class="video__title">${esc(d.title)}</p>
             <p class="video__sub">${esc(d.ch)}<br>${esc(d.views)}・${esc(d.ago)}</p>
@@ -216,7 +221,7 @@
     $("#videoEmpty").hidden = list.length > 0;
     observeReveal();
   };
-  $("#videoSearch").addEventListener("input", renderVideos);
+  $("#videoSearch")?.addEventListener("input", renderVideos);
 
   /* =======================================================
      05 工房シアター（定額配信）
@@ -246,13 +251,14 @@
     ]},
   ];
   const renderTheater = () => {
+    if (!has("#theaterRows")) return;
     $("#theaterRows").innerHTML = rows.map((r) => `
       <div class="row">
         <h3 class="row__title">${esc(r[lang])}</h3>
         <div class="row__track" tabindex="0" aria-label="${esc(r[lang])}${tr("（横にスクロールできます）", " (scroll sideways)")}">
           ${r.items.map(([ja, en, e, bg, isNew], i) => { const t = tr(ja, en); return `
             <button class="poster" type="button" style="--thumb:${bg}" data-toast="${esc(tr(`「${t}」はデモのため再生できません`, `"${t}" can't be played in this demo`))}">
-              <span class="poster__emoji" aria-hidden="true">${e}</span>
+              ${JKArt.patternBg(i % 2 ? "kikko" : "seigaiha")}<span class="poster__seal" aria-hidden="true"></span>
               ${r.rank ? `<span class="poster__rank" aria-hidden="true">${i + 1}</span>` : ""}
               ${isNew ? `<span class="poster__new">${tr("新作", "NEW")}</span>` : ""}
               <span class="poster__title">${esc(t)}</span>
@@ -283,7 +289,7 @@
   try { watched = new Set(JSON.parse(localStorage.getItem(WATCH_KEY) || "[]")); } catch (_) { /* 保存不可の環境 */ }
   const saveWatch = () => {
     try { localStorage.setItem(WATCH_KEY, JSON.stringify([...watched])); } catch (_) { /* 保存不可の環境 */ }
-    $("#watchCount").textContent = watched.size;
+    if (has("#watchCount")) $("#watchCount").textContent = watched.size;
   };
   const pad2 = (n) => String(n).padStart(2, "0");
   const remain = (end) => {
@@ -295,13 +301,14 @@
   };
   const bidStep = (p) => (p < 10000 ? 500 : p < 30000 ? 1000 : 2000);
   const renderMarket = () => {
+    if (!has("#marketList")) return;
     const sort = $("#marketSort").value;
     const list = items
       .filter((i) => mFilter === "all" || i.kind === mFilter)
       .sort((a, b) => sort === "low" ? a.price - b.price : sort === "high" ? b.price - a.price : a.end - b.end);
     $("#marketList").innerHTML = list.map((i) => { const title = i[lang]; const on = watched.has(i.id); return `
       <article class="card">
-        <div class="card__thumb" style="--thumb:${i.bg}"><span aria-hidden="true">${i.emoji}</span>
+        <div class="card__thumb" style="--thumb:${i.bg}">${JKArt.thumb(i.emoji, { pattern: "ichimatsu" })}
           <button class="watch" type="button" data-watch="${i.id}" aria-pressed="${on}" aria-label="${esc(tr(`「${title}」をお気に入りに${on ? "登録済み" : "追加"}`, on ? `Remove "${title}" from watchlist` : `Add "${title}" to watchlist`))}">${on ? "♥" : "♡"}</button></div>
         <div class="card__body">
           <p class="${i.kind === "auction" ? "tag-auction" : "tag-buy"}">${i.kind === "auction" ? tr("オークション", "Auction") : tr("即決価格", "Buy It Now")}</p>
@@ -324,8 +331,8 @@
     mFilter = b.dataset.mfilter;
     renderMarket();
   }));
-  $("#marketSort").addEventListener("change", renderMarket);
-  $("#marketList").addEventListener("click", (e) => {
+  $("#marketSort")?.addEventListener("change", renderMarket);
+  $("#marketList")?.addEventListener("click", (e) => {
     const w = e.target.closest("[data-watch]");
     if (w) {
       const id = Number(w.dataset.watch);
@@ -368,6 +375,7 @@
   ];
   const riskLabel = { mid: ["中", "Medium"], high: ["高", "High"] };
   const renderFund = () => {
+    if (!has("#fundList")) return;
     $("#fundList").innerHTML = projects.map((p) => {
       const d = p[lang];
       const pct = Math.min(100, Math.round((p.raised / p.goal) * 100));
@@ -400,6 +408,7 @@
   };
   const simUnits = $("#simUnits");
   const updateSim = () => {
+    if (!has("#simTotal")) return;
     const p = projects.find((x) => x.id === $("#simProject").value) || projects[0];
     const amount = Number(simUnits.value) * UNIT;
     $("#simUnitsOut").textContent = simUnits.value;
@@ -407,9 +416,9 @@
     $("#simShare").textContent = ((amount / p.goal) * 100).toFixed(2) + "%";
     $("#simRemain").textContent = yen(Math.max(0, p.goal - p.raised - amount));
   };
-  simUnits.addEventListener("input", updateSim);
-  $("#simProject").addEventListener("change", updateSim);
-  $("#fundList").addEventListener("click", (e) => {
+  simUnits?.addEventListener("input", updateSim);
+  $("#simProject")?.addEventListener("change", updateSim);
+  $("#fundList")?.addEventListener("click", (e) => {
     const a = e.target.closest("[data-pick]");
     if (a) { $("#simProject").value = a.dataset.pick; updateSim(); }
   });
@@ -418,6 +427,8 @@
      02 メタバース工房（ミニデモ）
      ======================================================= */
   const canvas = $("#metaCanvas");
+  let showZoneInfo = () => {}, draw = () => {};
+  if (canvas) {
   const ctx = canvas.getContext("2d");
   const W = 720, Hh = 420; // 論理サイズ（座標計算はこの大きさで行う）
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -428,13 +439,13 @@
     { id: "game", href: "game.html", x: 20, y: 20, w: 200, h: 130, color: "#e17055", icon: "🎮",
       ja: { name: "ゲームアリーナ", desc: "謎解きやミニゲームで遊べるエリア。ランキング上位には工房コインをプレゼントする想定です。" },
       en: { name: "Game Arena", desc: "Play puzzles and mini-games. Top players could earn Koubo Coins." } },
-    { id: "market", href: "#market", x: W - 220, y: 20, w: 200, h: 130, color: "#0984e3", icon: "🏪",
+    { id: "market", href: "market.html", x: W - 220, y: 20, w: 200, h: 130, color: "#0984e3", icon: "🏪",
       ja: { name: "マーケット展示館", desc: "マーケットの出品物を3Dで手に取るように見られる展示エリアです。" },
       en: { name: "Market Gallery", desc: "See market items in 3D, almost as if you were holding them." } },
-    { id: "class", href: "#academy", x: 20, y: Hh - 150, w: 200, h: 130, color: "#00b894", icon: "🎓",
+    { id: "class", href: "academy.html", x: 20, y: Hh - 150, w: 200, h: 130, color: "#00b894", icon: "🎓",
       ja: { name: "ライブ教室", desc: "講師のアバターと一緒に、リアルタイムでワークショップに参加できる教室です。" },
       en: { name: "Live Classroom", desc: "Join real-time workshops alongside your instructor's avatar." } },
-    { id: "theater", href: "#theater", x: W - 220, y: Hh - 150, w: 200, h: 130, color: "#fdcb6e", icon: "🎬",
+    { id: "theater", href: "theater.html", x: W - 220, y: Hh - 150, w: 200, h: 130, color: "#fdcb6e", icon: "🎬",
       ja: { name: "シアタールーム", desc: "友だちと同じ作品を同時に見ながら、感想を語り合える上映室です。" },
       en: { name: "Theater Room", desc: "Watch the same title with friends and share reactions as you go." } },
   ];
@@ -451,7 +462,7 @@
   const keys = new Set();
   let target = null;
   let currentZone = null;
-  const showZoneInfo = () => {
+  showZoneInfo = () => {
     const info = (currentZone || plaza)[lang];
     $("#metaZone").textContent = info.name;
     $("#metaDesc").textContent = info.desc;
@@ -507,7 +518,7 @@
     ctx.fillStyle = "#1a1636";
     ctx.beginPath(); ctx.arc(x - r * 0.35, y - r * 0.15, r * 0.13, 0, Math.PI * 2); ctx.arc(x + r * 0.35, y - r * 0.15, r * 0.13, 0, Math.PI * 2); ctx.fill();
   }
-  const draw = (t) => {
+  draw = (t) => {
     ctx.fillStyle = "#1a1636";
     ctx.fillRect(0, 0, W, Hh);
     ctx.strokeStyle = "rgba(255,255,255,0.05)";
@@ -523,7 +534,19 @@
       ctx.lineWidth = active ? 3 : 1.5;
       roundRect(z.x, z.y, z.w, z.h, 14); ctx.fill(); ctx.stroke();
       ctx.font = "34px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.fillText(z.icon, z.x + z.w / 2, z.y + z.h / 2 - 12);
+      ctx.save();
+      ctx.translate(z.x + z.w / 2 - 20, z.y + z.h / 2 - 34);
+      ctx.scale(0.4, 0.4);
+      JKArt.paths(z.icon).forEach((p) => {
+        ctx.save();
+        if (p.tf) { const m = p.tf.match(/rotate\(([-\d.]+) ([\d.]+) ([\d.]+)\)/); if (m) { ctx.translate(+m[2], +m[3]); ctx.rotate(+m[1] * Math.PI / 180); ctx.translate(-m[2], -m[3]); } }
+        ctx.globalAlpha = p.op;
+        const path = new Path2D(p.d);
+        if (p.stroke) { ctx.strokeStyle = p.stroke; ctx.lineWidth = 4; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.stroke(path); }
+        else if (p.fill !== "none") { ctx.fillStyle = p.fill; ctx.fill(path); }
+        ctx.restore();
+      });
+      ctx.restore();
       ctx.font = "bold 17px 'Noto Sans JP', sans-serif"; ctx.fillStyle = "#fff";
       ctx.fillText(z[lang].name, z.x + z.w / 2, z.y + z.h / 2 + 26);
       if (active) {
@@ -609,8 +632,10 @@
     }, { threshold: 0.2 }).observe(canvas);
   }
 
+  }
+
   /* ---------- 事前登録フォーム ---------- */
-  $("#joinForm").addEventListener("submit", (e) => {
+  $("#joinForm")?.addEventListener("submit", (e) => {
     e.preventDefault();
     const input = $("#joinEmail");
     const msg = $("#joinMsg");
@@ -639,13 +664,13 @@
     [".demo-bar", "This is a concept demo. All products, courses, projects and prices are samples. No real bookings, payments or investments can be made."],
     [".header .logo", "Jinsei Koubo home", "aria-label"],
     ["#nav", "Main menu", "aria-label"],
-    ['#nav a[href="#tour"]', '<i aria-hidden="true">旅</i>Tours'],
-    ['#nav a[href="#metaverse"]', '<i aria-hidden="true">遊</i>Metaverse'],
-    ['#nav a[href="#academy"]', '<i aria-hidden="true">学</i>Courses'],
-    ['#nav a[href="#channel"]', '<i aria-hidden="true">発</i>Channel'],
-    ['#nav a[href="#theater"]', '<i aria-hidden="true">観</i>Theater'],
-    ['#nav a[href="#market"]', '<i aria-hidden="true">市</i>Market'],
-    ['#nav a[href="#fund"]', '<i aria-hidden="true">研</i>Research'],
+    ['#nav a[href="tour.html"]', '<i aria-hidden="true">旅</i>Tours'],
+    ['#nav a[href="metaverse.html"]', '<i aria-hidden="true">遊</i>Metaverse'],
+    ['#nav a[href="academy.html"]', '<i aria-hidden="true">学</i>Courses'],
+    ['#nav a[href="channel.html"]', '<i aria-hidden="true">発</i>Channel'],
+    ['#nav a[href="theater.html"]', '<i aria-hidden="true">観</i>Theater'],
+    ['#nav a[href="market.html"]', '<i aria-hidden="true">市</i>Market'],
+    ['#nav a[href="fund.html"]', '<i aria-hidden="true">研</i>Research'],
     ["#nav .btn", "Go to sign-up"],
 
     [".hero__eyebrow", "Travel. Learn. Play. Make.<br class=\"sp\"> Back the future."],
@@ -659,20 +684,20 @@
 
     ["#services .section__title", "Seven workshops"],
     ["#services .section__lead", "Start anywhere and everything connects. Meet an artisan on a tour, take their course, buy their work in the market, and part of the sales goes to future research."],
-    ['.svc[href="#tour"] h3', "Inbound Tours"],
-    ['.svc[href="#tour"] p', "Hands-on tours for visitors to Japan, inside artisan workshops and local life."],
-    ['.svc[href="#metaverse"] h3', "Metaverse Workshop"],
-    ['.svc[href="#metaverse"] p', "A virtual workshop town where your avatar joins mini-games and meetups."],
-    ['.svc[href="#academy"] h3', "Academy"],
-    ['.svc[href="#academy"] p', "Online courses in kintsugi, woodworking, sake and more, taught directly by artisans and researchers."],
-    ['.svc[href="#channel"] h3', "Koubo Channel"],
-    ['.svc[href="#channel"] p', "A video service where anyone can post artisan craft, research explainers and more."],
-    ['.svc[href="#theater"] h3', "Koubo Theater"],
-    ['.svc[href="#theater"] p', "Original documentaries, dramas and anime, unlimited for one monthly fee."],
-    ['.svc[href="#market"] h3', "Koubo Market"],
-    ['.svc[href="#market"] p', "Buy and sell crafts and vintage finds person to person, by auction or Buy It Now."],
-    ['.svc[href="#fund"] h3', "Future Research Fund"],
-    ['.svc[href="#fund"] p', "Back research such as perovskite solar cells and fusion energy,<br class=\"pc\"> starting from around ¥10,000 per unit."],
+    ['.svc[href="tour.html"] h3', "Inbound Tours"],
+    ['.svc[href="tour.html"] p', "Hands-on tours for visitors to Japan, inside artisan workshops and local life."],
+    ['.svc[href="metaverse.html"] h3', "Metaverse Workshop"],
+    ['.svc[href="metaverse.html"] p', "A virtual workshop town where your avatar joins mini-games and meetups."],
+    ['.svc[href="academy.html"] h3', "Academy"],
+    ['.svc[href="academy.html"] p', "Online courses in kintsugi, woodworking, sake and more, taught directly by artisans and researchers."],
+    ['.svc[href="channel.html"] h3', "Koubo Channel"],
+    ['.svc[href="channel.html"] p', "A video service where anyone can post artisan craft, research explainers and more."],
+    ['.svc[href="theater.html"] h3', "Koubo Theater"],
+    ['.svc[href="theater.html"] p', "Original documentaries, dramas and anime, unlimited for one monthly fee."],
+    ['.svc[href="market.html"] h3', "Koubo Market"],
+    ['.svc[href="market.html"] p', "Buy and sell crafts and vintage finds person to person, by auction or Buy It Now."],
+    ['.svc[href="fund.html"] h3', "Future Research Fund"],
+    ['.svc[href="fund.html"] p', "Back research such as perovskite solar cells and fusion energy,<br class=\"pc\"> starting from around ¥10,000 per unit."],
 
     ["#tour .section__title", "Meet the makers of Japan"],
     ["#tour .section__lead", "Go beyond sightseeing. Step inside artisan workshops and local life on hands-on tours designed for visitors to Japan, with guides in English, Chinese and more."],
@@ -787,11 +812,11 @@
     [".join__form .btn", "Sign up for launch news"],
 
     [".footer__copy", "Travel. Learn. Play. Make. Back the future."],
-    ['.footer__links a[href="#services"]', "All services"],
-    ['.footer__links a[href="#why"]', "Why now"],
-    ['.footer__links a[href="#model"]', "Business model"],
-    ['.footer__links a[href="#roadmap"]', "Roadmap"],
-    ['.footer__links a[href="#faq"]', "FAQ"],
+    ['.footer__links a[href$="#services"]', "All services"],
+    ['.footer__links a[href$="#why"]', "Why now"],
+    ['.footer__links a[href$="#model"]', "Business model"],
+    ['.footer__links a[href$="#roadmap"]', "Roadmap"],
+    ['.footer__links a[href$="#faq"]', "FAQ"],
     ['.footer__links a[href="#join"]', "Sign up"],
     ['.footer__links a[href="brand.html"]', "Logo & brand"],
     [".footer__links li:nth-child(8) span", "Company info (coming soon)"],
@@ -799,6 +824,13 @@
     [".footer__links li:nth-child(10) span", "Privacy policy (coming soon)"],
     [".footer__bottom", "© Jinsei Koubo · Concept demo site"],
     ["#toTop", "Back to top", "aria-label"],
+    ['.more-link[href="tour.html"]', "See all tour details"],
+    ['.more-link[href="metaverse.html"]', "More about the Metaverse Workshop"],
+    ['.more-link[href="academy.html"]', "See all course details"],
+    ['.more-link[href="channel.html"]', "More about Koubo Channel"],
+    ['.more-link[href="theater.html"]', "More about Koubo Theater"],
+    ['.more-link[href="market.html"]', "More about the market"],
+    ['.more-link[href="fund.html"]', "More about the research fund"],
     [".m-cta .btn", "Go to sign-up"],
     ["#metaverse .section__lead", "Walk through a virtual “workshop town” as an avatar and join games and events. In the mini demo below, use the arrow keys, or click or tap where you want to walk. Step into an area and press “Enter” to go to that page."],
   ];
@@ -856,6 +888,7 @@
     "__footer_why": "Why now",
     "__footer_model": "Business model"
   };
+  Object.assign(I18N_KEYS, window.JK_I18N_PAGES || {});
   const keyEls = $$("[data-i18n]");
   const keyJa = new Map(keyEls.map((el) => [el, el.innerHTML]));
   keyEls.forEach((el) => { if (!(el.dataset.i18n in I18N_KEYS)) console.warn("i18n: missing key", el.dataset.i18n); });
@@ -863,10 +896,10 @@
   // 日本語の元の状態を記憶しておく（日本語に戻すときに使う）
   const I18N_JA = I18N_STATIC.map(([sel, , attr]) => {
     const el = $(sel);
-    if (!el) { console.warn("i18n: not found", sel); return null; }
+    if (!el) return null;
     return attr ? el.getAttribute(attr) : el.innerHTML;
   });
-  const TITLE = { ja: document.title, en: "Jinsei Koubo | Travel, learn, play and back the future" };
+  const TITLE = { ja: document.title, en: (document.querySelector('meta[name="jk:title-en"]') || {}).content || "Jinsei Koubo | Travel, learn, play and back the future" };
 
   const applyLang = () => {
     I18N_STATIC.forEach(([sel, en, attr], i) => {
@@ -969,7 +1002,7 @@
   /* ---------- スマホ：画面下の事前登録ボタン ----------
      ファーストビューを過ぎたら表示し、登録フォームが見えている間は隠す */
   const mCta = $("#mCta");
-  if ("IntersectionObserver" in window) {
+  if ("IntersectionObserver" in window && mCta && has(".hero, .page-hero") && has("#join")) {
     const seen = { hero: true, join: false };
     const syncCta = () => {
       const show = !seen.hero && !seen.join;
@@ -981,7 +1014,7 @@
     new IntersectionObserver((entries) => {
       entries.forEach((en) => { seen[en.target.id === "join" ? "join" : "hero"] = en.isIntersecting; });
       syncCta();
-    }).observe($(".hero"));
+    }).observe($(".hero, .page-hero"));
     const joinObs = new IntersectionObserver(([en]) => { seen.join = en.isIntersecting; syncCta(); });
     joinObs.observe($("#join"));
   }
