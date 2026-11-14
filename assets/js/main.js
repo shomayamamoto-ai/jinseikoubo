@@ -832,6 +832,7 @@
     ['.more-link[href="market.html"]', "More about the market"],
     ['.more-link[href="fund.html"]', "More about the research fund"],
     [".m-cta .btn", "Go to sign-up"],
+    ["#metaEnter", "Enter area"],
     ["#metaverse .section__lead", "Walk through a virtual “workshop town” as an avatar and join games and events. In the mini demo below, use the arrow keys, or click or tap where you want to walk. Step into an area and press “Enter” to go to that page."],
   ];
   /* data-i18n の付いた要素：日本語はHTMLのまま、英語はこの辞書から差し替える */
@@ -914,7 +915,8 @@
     // 言語メニュー：ボタンには「今の言語」を表示し、選択中の項目に印を付ける
     const btn = $("#langToggle");
     btn.textContent = lang === "en" ? "English" : "日本語";
-    btn.setAttribute("aria-label", tr("言語を選ぶ（現在：日本語）", "Choose language (current: English)"));
+    btn.removeAttribute("aria-label");
+    btn.title = tr("言語を選ぶ", "Choose language");
     $$("#langMenu [data-lang]").forEach((b) => b.setAttribute("aria-current", String(b.dataset.lang === lang)));
     setNav(nav.classList.contains("is-open"));
     renderTours();
@@ -981,10 +983,12 @@
   /* ---------- スクロール時の表示アニメーション ----------
      要素は最初から見えている状態。画面に入ったときに軽く動かすだけ。 */
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const seenAt = new WeakMap();
   const io = !reduce && "IntersectionObserver" in window ? new IntersectionObserver((entries) => {
     entries.forEach((en) => {
       if (!en.isIntersecting) return;
-      en.target.classList.add("is-anim");
+      // 監視を始めた直後から見えているものは動かさない（最初の表示をそのまま見せる）
+      if (performance.now() - (seenAt.get(en.target) || 0) > 250) en.target.classList.add("is-anim");
       io.unobserve(en.target);
     });
   }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }) : null;
@@ -992,8 +996,8 @@
     if (!io) return;
     $$(".reveal:not(.is-anim):not(.is-seen)").forEach((el) => {
       el.classList.add("is-seen");
-      // すでに画面内にあるものは動かさない（最初の表示をそのまま見せる）
-      if (el.getBoundingClientRect().top < window.innerHeight) return;
+      el.style.setProperty("--i", Math.min([...el.parentElement.children].indexOf(el), 6));
+      seenAt.set(el, performance.now());
       io.observe(el);
     });
   }
@@ -1017,6 +1021,41 @@
     }).observe($(".hero, .page-hero"));
     const joinObs = new IntersectionObserver(([en]) => { seen.join = en.isIntersecting; syncCta(); });
     joinObs.observe($("#join"));
+  }
+
+  /* ---------- 数字のカウントアップと、七つの印 ----------
+     見えたときに1度だけ動かす。動きを減らす設定の人には、最初から完成形を見せる */
+  if (!reduce && "IntersectionObserver" in window) {
+    const countUp = (el) => {
+      const node = [...el.childNodes].find((n) => n.nodeType === 3 && /[\d]/.test(n.textContent));
+      if (!node) return;
+      const raw = node.textContent.trim();
+      const target = parseFloat(raw.replace(/,/g, ""));
+      const unit = (el.querySelector("small") || {}).textContent || "";
+      if (!isFinite(target) || /年|s$/.test(unit.trim())) return; // 「2030年代」のような年は数えない
+      const decimals = (raw.split(".")[1] || "").length;
+      const comma = raw.includes(",");
+      const fmt = (v) => comma ? Math.round(v).toLocaleString("en-US") : v.toFixed(decimals);
+      const t0 = performance.now(), dur = 1200;
+      const step = (now) => {
+        const k = Math.min(1, (now - t0) / dur);
+        const eased = 1 - Math.pow(1 - k, 3);
+        node.textContent = fmt(target * eased);
+        if (k < 1) requestAnimationFrame(step); else node.textContent = raw;
+      };
+      requestAnimationFrame(step);
+    };
+    const once = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        if (en.target.classList.contains("stat__num")) countUp(en.target);
+        en.target.classList.add("is-in-view");
+        once.unobserve(en.target);
+      });
+    }, { threshold: 0.5 });
+    $$(".stat__num, .concept__stamps, .hero__ring").forEach((el) => once.observe(el));
+  } else {
+    $$(".concept__stamps, .hero__ring").forEach((el) => el.classList.add("is-in-view"));
   }
 
   /* ---------- ページ先頭へ戻るボタン ---------- */

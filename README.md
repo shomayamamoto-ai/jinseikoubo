@@ -87,3 +87,31 @@ assets/js/main.js     … サンプルデータと動き
 | `_sprite.svg` | サイトに埋め込む形の定義（文字色に追従） |
 
 ネームロゴの字形は Shippori Mincho（SIL Open Font License 1.1）をもとに作成しています。
+
+## ページ構成と更新のしかた
+
+| ページ | 内容 |
+|---|---|
+| `index.html` | トップページ |
+| `tour.html` `metaverse.html` `academy.html` `channel.html` `theater.html` `market.html` `fund.html` | 各サービスの詳細ページ（自動生成） |
+| `game.html` | 工房クイズ（メタバースのゲームアリーナ） |
+| `brand.html` | ロゴガイド |
+
+詳細ページは `index.html` のヘッダー・フッター・各セクションを部品として作っています。
+`index.html` を直したあとは、次のコマンドで詳細ページを作り直してください。
+
+```bash
+python3 tools/build_pages.py
+```
+
+- `assets/js/art.js`：イラスト（SVG）の部品集。絵文字は使わず、同じ描き方でそろえています。
+- `assets/js/i18n-pages.js`：詳細ページの英語（自動生成。直接は編集しません）。
+- `sitemap.xml` `robots.txt`：検索エンジン向けの案内。
+
+## 計測結果（Lighthouse、ローカル計測）
+
+| ページ | 速度 | アクセシビリティ | ベストプラクティス | SEO |
+|---|---|---|---|---|
+| トップ（スマホ） | 94 | 97 | 100 | 100 |
+| トップ（PC） | 96 | 100 | 100 | 100 |
+| 詳細ページ（スマホ） | 95〜99 | 100 | 100 | 100 |

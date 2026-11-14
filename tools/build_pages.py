@@ -273,6 +273,12 @@ def build():
         h = re.sub(r'<link rel="canonical" href="[^"]*">', f'<link rel="canonical" href="{SITE_URL}{file}">', h)
         h = re.sub(r'<meta name="jk:title-en" content="[^"]*">', "", h)
         h = h.replace("</title>", f'</title>\n  <meta name="jk:title-en" content="{name_en} | Jinsei Koubo">', 1)
+        # 構造化データ：トップの「組織」を外し、このページの「パンくず」に置きかえる
+        crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "人生工房", "item": SITE_URL},
+            {"@type": "ListItem", "position": 2, "name": name_ja, "item": SITE_URL + file}]}
+        h = re.sub(r'<script type="application/ld\+json">.*?</script>',
+                   '<script type="application/ld+json">' + json.dumps(crumbs, ensure_ascii=False) + '</script>', h, flags=re.S)
         # 今いるページのメニューに印を付ける
         h = h.replace(f'<li><a href="{file}">', f'<li><a href="{file}" aria-current="page">', 1)
         html = h + main + tail

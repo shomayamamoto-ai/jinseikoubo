@@ -1176,3 +1176,85 @@ svg.logo__mark { color: inherit; }
 .other:hover .other__arrow { transform: translateX(4px); }
 .nav a[aria-current="page"] { font-weight: 700; }
 @media (min-width: 1080px) { .nav a[aria-current="page"]::after { transform: scaleX(1); } }
+
+
+/* =========================================================
+   動きと演出（端末で「動きを減らす」設定の人には出さない）
+   ========================================================= */
+/* 「詳細を見る」：文字は墨色、下線だけサービスの色（コントラストを確保） */
+.more-link { color: var(--text); border-bottom: 2px solid var(--c, var(--text)); }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ページ切り替えを、なめらかにつなぐ（対応ブラウザのみ） */
+  @view-transition { navigation: auto; }
+  .header { view-transition-name: site-header; }
+  ::view-transition-old(root) { animation: vt-out var(--dur-medium) var(--ease-standard) both; }
+  ::view-transition-new(root) { animation: vt-in var(--dur-long) var(--ease-emph-decel) both; }
+  @keyframes vt-out { to { opacity: 0; transform: translateY(-8px); } }
+  @keyframes vt-in { from { opacity: 0; transform: translateY(12px); } }
+
+  /* ファーストビュー：「創」が印を押すように定まり、文章が順に現れる */
+  .hero__big { animation: stamp .9s var(--ease-emph-decel) .25s both; }
+  @keyframes stamp { from { opacity: 0; transform: scale(1.18); filter: blur(6px); } 60% { opacity: 1; filter: blur(0); } to { transform: none; } }
+  .hero__pre { animation: rise .8s var(--ease-emph-decel) .05s both; }
+  .hero__post { animation: rise .8s var(--ease-emph-decel) .7s both; }
+  .hero__eyebrow, .hero__lead { animation: fade-in 1s var(--ease-standard) .9s both; }
+  .hero__cta { animation: rise .8s var(--ease-emph-decel) 1.1s both; }
+  @keyframes fade-in { from { opacity: 0; } }
+
+  /* 霞の雲が、ゆっくり左右に流れる */
+  .kasumi span { animation: drift 26s ease-in-out infinite alternate; }
+  .kasumi span:nth-child(2n) { animation-duration: 34s; animation-direction: alternate-reverse; }
+  .kasumi span:nth-child(3n) { animation-duration: 40s; }
+  @keyframes drift { from { transform: translateX(-18px); } to { transform: translateX(26px); } }
+
+  /* 一覧のカードは時間差で現れる */
+  .reveal.is-anim { animation-delay: calc(var(--i, 0) * 70ms); }
+
+  /* 七つの印が、押されるように順に現れる */
+  .concept__stamps li { opacity: 0; }
+  .concept__stamps.is-in-view li { animation: press .5s var(--ease-emph-decel) both; animation-delay: calc(var(--n, 0) * 90ms); }
+  .concept__stamps li:nth-child(1) { --n: 0; } .concept__stamps li:nth-child(2) { --n: 1; } .concept__stamps li:nth-child(3) { --n: 2; }
+  .concept__stamps li:nth-child(4) { --n: 3; } .concept__stamps li:nth-child(5) { --n: 4; } .concept__stamps li:nth-child(6) { --n: 5; }
+  .concept__stamps li:nth-child(7) { --n: 6; }
+  @keyframes press { from { opacity: 0; transform: scale(1.5) rotate(-8deg); } 70% { opacity: 1; transform: scale(.94); } to { opacity: 1; transform: none; } }
+
+  /* サービスの帯：マウスを乗せると漢字の印が少し前へ */
+  .work__mark { transition: transform var(--dur-long) var(--ease-emph-decel); }
+  .work:hover .work__mark { transform: translateX(8px) scale(1.04); }
+
+  /* 詳細ページの見出しのイラストが、ゆっくり浮かぶ */
+  .page-hero__art > svg.art g { animation: float 6s ease-in-out infinite alternate; transform-box: fill-box; }
+  @keyframes float { from { transform: translateY(4px); } to { transform: translateY(-6px); } }
+}
+
+
+/* =========================================================
+   計測（Lighthouse）にもとづく修正
+   ========================================================= */
+/* 終了間近：文字を点滅させず（薄くなる瞬間にコントラストが下がるため）、赤い点を脈打たせる */
+.ends.is-soon { animation: none; }
+.ends.is-soon::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; background: currentColor; vertical-align: middle; animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { transform: scale(.55); opacity: .5; } }
+@media (prefers-reduced-motion: reduce) { .ends.is-soon::before { animation: none; } }
+/* 🌐 は飾りなので、読み上げの対象から外す */
+.lang-toggle::before { content: "🌐" / ""; }
+
+
+/* 画面の外にあるセクションは、近づくまで描画を後回しにする（表示を速くする） */
+main > section:not(.hero):not(.page-hero) { content-visibility: auto; contain-intrinsic-size: auto 900px; }
+
+/* 言語ボタンの地球の印は、絵文字ではなく図形で描く（読み上げ名と見た目を一致させる） */
+.lang-toggle::before {
+  content: ""; width: 16px; height: 16px; flex-shrink: 0; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h18M12 3c-3 3-3 15 0 18M12 3c3 3 3 15 0 18'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h18M12 3c-3 3-3 15 0 18M12 3c3 3 3 15 0 18'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ツアーは次の暗いセクションと計測上の位置が重なって誤検知されるため、後回しの対象から外す */
+main > section#tour { content-visibility: visible; }
+
+/* 後回しにする対象を整理：トップページでは、暗いセクションより後ろの明るいセクションだけ
+   （計測ツールが、後回し中の位置のずれを「文字と背景の重なり」と誤検知するのを防ぐ） */
+main:has(> .hero) > section { content-visibility: visible; }
+main:has(> .hero) > section:is(#market, #fund, #ecosystem, #model, #roadmap, #faq) { content-visibility: auto; }
