@@ -730,7 +730,7 @@
   const finishFlow = () => {
     const f = flow;
     if (f.kind === "tour") done(tr("予約の流れを体験しました", "You've tried the booking flow"), tr(`「${tours[f.id][lang].title}」を、${fmtDate(f.dates[f.date].d)}・${f.n}名で予約する流れでした。`, `That was the flow for booking “${tours[f.id][lang].title}” on ${fmtDate(f.dates[f.date].d)} for ${f.n}.`), `<a class="btn btn--line" href="academy.html">${tr("関連する講座を見る", "Browse related courses")}</a>`);
-    else if (f.kind === "course") done(tr("申込の流れを体験しました", "You've tried the enrollment flow"), tr(`「${courses[f.id][lang].title}」に申し込む流れでした。`, `That was the flow for enrolling in “${courses[f.id][lang].title}.”`), `<a class="btn btn--line" href="channel.html">${tr("工房チャンネルを見る", "Visit Koubo Channel")}</a>`);
+    else if (f.kind === "course") done(tr("申込みの流れを体験しました", "You've tried the enrollment flow"), tr(`「${courses[f.id][lang].title}」に申し込む流れでした。`, `That was the flow for enrolling in “${courses[f.id][lang].title}.”`), `<a class="btn btn--line" href="channel.html">${tr("工房チャンネルを見る", "Visit Koubo Channel")}</a>`);
     else if (f.kind === "cart") { const n = cart.size; cart.clear(); saveCart(); renderMarket(); done(tr("購入の流れを体験しました", "You've tried the checkout flow"), tr(`${n}点の商品を購入する流れでした。カートは空に戻しました。`, `That was the flow for buying ${n} item${n === 1 ? "" : "s"}. Your cart has been emptied.`), ""); }
     else if (f.kind === "fund") done(tr("支援の流れを体験しました", "You've tried the backing flow"), tr(`${f.units}口（${yen(f.units * UNIT)}）を支援する流れでした。`, `That was the flow for backing ${f.units} unit${f.units === 1 ? "" : "s"} (${yen(f.units * UNIT)}).`), "");
     flow = null;
@@ -1048,6 +1048,10 @@
     keyEls.forEach((el) => { el.innerHTML = lang === "en" ? I18N_KEYS[el.dataset.i18n] : keyJa.get(el); });
     document.documentElement.lang = lang;
     document.title = TITLE[lang];
+    // 出典リンク（↗）は記号だけなので、読み上げ用の名前を付ける
+    $$(".stat__src a, .learn-card__policy a").forEach((a) => a.setAttribute("aria-label", tr("出典を開く（新しいタブ）", "Open source (new tab)")));
+    // たたんだ部分の「続きを見る」ボタン
+    $$(".fold-btn").forEach((b) => { const open = b.getAttribute("aria-expanded") === "true"; b.textContent = open ? tr("たたむ", "Show less") : tr("続きを見る", "Show more"); });
     // 言語メニュー：ボタンには「今の言語」を表示し、選択中の項目に印を付ける
     const btn = $("#langToggle");
     btn.textContent = lang === "en" ? "English" : "日本語";
@@ -1195,6 +1199,23 @@
   } else {
     $$(".concept__stamps, .hero__ring").forEach((el) => el.classList.add("is-in-view"));
   }
+
+  /* ---------- スマホのトップ：長い部分を「続きを見る」でたたむ ---------- */
+  $$("[data-fold]").forEach((el, i) => {
+    el.id = el.id || `fold${i}`;
+    el.classList.add("is-folded");
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "fold-btn";
+    b.setAttribute("aria-expanded", "false"); b.setAttribute("aria-controls", el.id);
+    b.textContent = tr("続きを見る", "Show more");
+    el.after(b);
+    b.addEventListener("click", () => {
+      const open = el.classList.toggle("is-folded") === false;
+      b.setAttribute("aria-expanded", String(open));
+      b.textContent = open ? tr("たたむ", "Show less") : tr("続きを見る", "Show more");
+      if (!open) el.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+    });
+  });
 
   /* ---------- ページ先頭へ戻るボタン ---------- */
   const toTop = $("#toTop");

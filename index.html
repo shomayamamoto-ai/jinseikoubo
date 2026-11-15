@@ -30,7 +30,7 @@
   <a class="skip" href="#main">本文へスキップ</a>
 
   <div class="demo-bar" role="note">
-    このサイトは構想段階のデモです。表示している商品・講座・案件・金額はすべてサンプルで、実際の申込・決済・投資はできません。
+    このサイトは構想段階のデモです。表示している商品・講座・案件・金額はすべてサンプルで、実際の申込み・決済・投資はできません。
   </div>
 
   <header class="header" id="top">
@@ -162,7 +162,7 @@
           </p>
           <a class="more-link" href="tour.html">ツアーの詳細を見る</a>
         </header>
-        <div class="filter" role="group" aria-label="ツアーの地域で絞り込み">
+        <div class="filter" data-detail role="group" aria-label="ツアーの地域で絞り込み">
           <button class="chip is-active" data-filter="all">すべて</button>
           <button class="chip" data-filter="kyoto">京都</button>
           <button class="chip" data-filter="tokyo">東京</button>
@@ -349,7 +349,7 @@
           <a class="more-link" href="fund.html">研究ファンドの詳細を見る</a>
         </header>
 
-        <ol class="flow" aria-label="支援の流れ">
+        <ol class="flow" aria-label="支援の流れ" data-detail>
           <li><span>1</span><strong>案件を選ぶ</strong><p>研究内容・リスク・<br>資金の使い道を確認</p></li>
           <li><span>2</span><strong>1口から申し込む</strong><p>1口1万円程度を<br>想定</p></li>
           <li><span>3</span><strong>進捗を見届ける</strong><p>レポート・動画・<br>研究室見学会</p></li>
@@ -404,7 +404,7 @@
           </div>
         </div>
 
-        <div class="risk" role="note">
+        <div class="risk" role="note" data-fold>
           <h3>ご注意（構想段階の注記）</h3>
           <ul>
             <li>研究開発は成功が保証されたものではなく、支援したお金が戻らない可能性があります。</li>
@@ -446,7 +446,7 @@
           <h2 class="section__title" data-i18n="model.title">収益のしくみ（案）</h2>
           <p class="section__lead" data-i18n="model.lead">7つのサービスは、それぞれ違う方法で売上をつくり、互いにお客さまを送り合います。<br class="pc">ひとつのサービスに頼らないことで、事業全体を安定させるねらいです。</p>
         </header>
-        <div class="table-wrap">
+        <div data-fold class="table-wrap">
           <table class="data-table data-table--model">
             <thead data-i18n="model.head"><tr><th scope="col">サービス</th><th scope="col">主な収益</th><th scope="col">ほかのサービスへのつながり</th></tr></thead>
             <tbody data-i18n="model.body"><tr><th scope="row"><span class="mark">旅</span>インバウンドツアー</th><td>ツアー代金</td><td>参加者を講座・マーケットへ案内</td></tr><tr><th scope="row"><span class="mark">遊</span>メタバース工房</th><td>有料イベント、デジタル商品の販売</td><td>3D展示から商品の購入へ</td></tr><tr><th scope="row"><span class="mark">学</span>アカデミー</th><td>受講料</td><td>修了者が工房チャンネルで発信</td></tr><tr><th scope="row"><span class="mark">発</span>工房チャンネル</th><td>広告、応援（投げ銭）の手数料</td><td>動画から講座・ツアーへ</td></tr><tr><th scope="row"><span class="mark">観</span>工房シアター</th><td>月額料金</td><td>作品を通じて研究や職人を知り、支援へ</td></tr><tr><th scope="row"><span class="mark">市</span>工房マーケット</th><td>売買手数料</td><td>売上の一部を研究ファンドへ（検討中）</td></tr><tr><th scope="row"><span class="mark">研</span>未来研究ファンド</th><td>運営手数料（案）</td><td>支援者向けの研究室見学ツアー</td></tr></tbody>
@@ -464,7 +464,7 @@
           <h2 class="section__title">最終形態までの<br class="sp">ロードマップ（案）</h2>
           <p class="section__lead">すべてを一度に始めるのではなく、段階的に広げていく想定です。</p>
         </header>
-        <ol class="roadmap">
+        <ol data-fold class="roadmap">
           <li><span class="roadmap__phase">PHASE 1</span><h3>入口をつくる</h3><p>インバウンドツアー／オンライン講座／工房チャンネル</p></li>
           <li><span class="roadmap__phase">PHASE 2</span><h3>売る・観る</h3><p>工房マーケット／工房シアター</p></li>
           <li><span class="roadmap__phase">PHASE 3</span><h3>集う</h3><p>メタバース工房（イベント・ゲーム・3D展示）</p></li>
@@ -484,7 +484,7 @@
           <details><summary>今すぐ使えるサービスはありますか？</summary><p>現在は構想段階のため、まだ利用できるサービスはありません。下の事前登録で、サービス開始のお知らせを受け取れるようにする予定です。</p></details>
           <details><summary>アカウントはサービスごとに必要ですか？</summary><p>ひとつの共通アカウントで、7つのサービスすべてを使えるようにする構想です。</p></details>
           <details><summary>研究ファンドに1万円を出すと、お金は増えますか？</summary><p>増えるとは限りません。研究は失敗することもあり、支援したお金が戻らない可能性があります。リターンの形（成果報告、見学会、金銭的な分配など）は案件ごとに異なる想定で、金銭的な分配を行う場合は法令にもとづく体制を整えてから開始します。</p></details>
-          <details><summary>海外からツアーに申し込めますか？</summary><p>訪日客向けのサービスのため、英語などの多言語での申込・案内に対応する予定です。</p></details>
+          <details><summary>海外からツアーに申し込めますか？</summary><p>訪日客向けのサービスのため、英語などの多言語での申込み・案内に対応する予定です。</p></details>
           <details><summary>マーケットに出品するには何が必要ですか？</summary><p>共通アカウントと本人確認を行えば、個人でも出品できる仕組みを想定しています。出品できない品物のルールは、正式公開時にお知らせします。</p></details>
         </div>
       </div>
