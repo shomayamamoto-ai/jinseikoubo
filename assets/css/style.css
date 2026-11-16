@@ -1224,7 +1224,7 @@ svg.logo__mark { color: inherit; }
   .work:hover .work__mark { transform: translateX(8px) scale(1.04); }
 
   /* 詳細ページの見出しのイラストが、ゆっくり浮かぶ */
-  .page-hero__art > svg.art g { animation: float 6s ease-in-out infinite alternate; transform-box: fill-box; }
+  .page-hero__art .art__obj { animation: float 6s ease-in-out infinite alternate; }
   @keyframes float { from { transform: translateY(4px); } to { transform: translateY(-6px); } }
 }
 
@@ -1371,4 +1371,35 @@ main:has(> .hero) [data-detail] { display: none; }
   /* スマホのトップは、セクションの上下の余白を少しつめる */
   main:has(> .hero) > .section { padding-block: 52px; }
   main:has(> .hero) [data-fold].risk.is-folded { max-height: 150px; }
+}
+
+
+/* =========================================================
+   明るい表示・暗い表示の切り替えボタン
+   ========================================================= */
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; flex-shrink: 0;
+  min-width: 44px; min-height: 44px; padding: 0 10px; border: 0; border-radius: var(--shape-sm); background-color: transparent; color: var(--text);
+  font-size: 15px; font-weight: 700;
+}
+.theme-toggle::before {
+  content: ""; width: 20px; height: 20px; background: currentColor; flex-shrink: 0;
+  /* 月の形（今が明るい表示のとき） */
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.theme-toggle[aria-pressed="true"]::before {
+  /* 太陽の形（今が暗い表示のとき） */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='4.5' fill='%23000'/%3E%3Cpath d='M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='4.5' fill='%23000'/%3E%3Cpath d='M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8'/%3E%3C/svg%3E");
+}
+.theme-toggle--header { order: 3; }
+.theme-toggle--nav { display: none; }
+@media (max-width: 599px) {
+  .theme-toggle--header { display: none; }
+  .theme-toggle--nav { display: inline-flex; justify-content: flex-start; width: 100%; min-height: 52px; padding: 0; border-bottom: 1px solid var(--line); border-radius: 0; }
+}
+/* 切り替えた瞬間、色がなめらかに移る */
+@media (prefers-reduced-motion: no-preference) {
+  body, .header, .card, .section--tint, .stat, .feature, .point, .other { transition: background-color var(--dur-medium) var(--ease-standard), color var(--dur-medium) var(--ease-standard); }
 }

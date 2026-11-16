@@ -1069,6 +1069,7 @@
     saveWatch();
     saveCart();
     closeFlow();
+    if (typeof syncThemeButtons === "function") syncThemeButtons();
     showZoneInfo();
     draw(0);
   };
@@ -1216,6 +1217,32 @@
       if (!open) el.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
     });
   });
+
+  /* ---------- 明るい表示・暗い表示の切り替え ----------
+     最初は端末の設定に合わせ、ボタンで選んだらこの端末に記憶する */
+  const THEME_KEY = "jinseikoubo-theme";
+  const darkMQ = window.matchMedia("(prefers-color-scheme: dark)");
+  const isDark = () => (document.documentElement.dataset.theme || (darkMQ.matches ? "dark" : "light")) === "dark";
+  const syncThemeButtons = () => {
+    const dark = isDark();
+    const label = dark ? tr("明るい表示にする", "Switch to light mode") : tr("暗い表示にする", "Switch to dark mode");
+    $$("[data-theme-toggle]").forEach((b) => {
+      b.setAttribute("aria-pressed", String(dark));
+      if (b.querySelector(".theme-toggle__label")) { b.querySelector(".theme-toggle__label").textContent = label; b.removeAttribute("aria-label"); }
+      else b.setAttribute("aria-label", label);
+      b.title = label;
+    });
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#161616" : "#0f1838");
+  };
+  $$("[data-theme-toggle]").forEach((b) => b.addEventListener("click", () => {
+    const next = isDark() ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem(THEME_KEY, next); } catch (_) { /* 保存不可の環境 */ }
+    syncThemeButtons();
+    draw(0);
+  }));
+  darkMQ.addEventListener?.("change", syncThemeButtons);
+  syncThemeButtons();
 
   /* ---------- ページ先頭へ戻るボタン ---------- */
   const toTop = $("#toTop");

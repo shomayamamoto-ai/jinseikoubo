@@ -192,7 +192,7 @@
       <rect width="${w}" height="${h}" fill="url(#jk-p-${pattern})" opacity=".13"/>
       <circle cx="${w * 0.12}" cy="${h * 0.04}" r="${Math.max(w, h) * 0.55}" fill="#fff" opacity=".12"/>
       <ellipse cx="${w / 2 + s * 0.08}" cy="${y + s * 0.93}" rx="${s * 0.42}" ry="${s * 0.07}" fill="#000" opacity=".22"/>
-      <g transform="translate(${x} ${y}) scale(${s / 100})">${draw(key)}</g>
+      <g transform="translate(${x} ${y}) scale(${s / 100})"><g class="art__obj">${draw(key)}</g></g>
     </svg>`;
   };
   /** 絵柄だけ（アイコンとして小さく使う） */
