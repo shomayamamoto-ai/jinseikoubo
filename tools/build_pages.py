@@ -270,6 +270,8 @@ def build():
         h = re.sub(r'<meta property="og:title" content="[^"]*">', f'<meta property="og:title" content="{name_ja}｜人生工房">', h)
         h = re.sub(r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{desc}">', h)
         h = re.sub(r'<meta property="og:url" content="[^"]*">', f'<meta property="og:url" content="{SITE_URL}{file}">', h)
+        # SNS共有画像は、ページごとの専用画像（tools/make_og.js で作成）
+        h = re.sub(r'<meta property="og:image" content="[^"]*">', f'<meta property="og:image" content="{SITE_URL}assets/og/{sid}.png">', h)
         h = re.sub(r'<link rel="canonical" href="[^"]*">', f'<link rel="canonical" href="{SITE_URL}{file}">', h)
         h = re.sub(r'<meta name="jk:title-en" content="[^"]*">', "", h)
         h = h.replace("</title>", f'</title>\n  <meta name="jk:title-en" content="{name_en} | Jinsei Koubo">', 1)
