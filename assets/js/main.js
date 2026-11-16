@@ -40,10 +40,40 @@
   let lang = "ja";
   try {
     const saved = localStorage.getItem(LANG_KEY);
-    if (saved === "ja" || saved === "en") lang = saved;
-    else if (!(navigator.language || "ja").toLowerCase().startsWith("ja")) lang = "en"; // 海外からの訪問者は英語で表示
+    const nl = (navigator.language || "ja").toLowerCase();
+    if (["ja", "en", "zh-Hans", "ko"].includes(saved)) lang = saved;
+    else if (nl.startsWith("ja")) lang = "ja";
+    else if (nl.startsWith("zh")) lang = "zh-Hans";   // 中国語の閲覧者は簡体字
+    else if (nl.startsWith("ko")) lang = "ko";        // 韓国語の閲覧者は韓国語
+    else lang = "en";                                 // それ以外の海外からの訪問者は英語
   } catch (_) { /* 保存不可の環境では日本語 */ }
-  const tr = (ja, en) => (lang === "en" ? en : ja);
+  /* 中国語・韓国語：英語の文章をキーにした辞書（assets/js/i18n-zhko.js）で訳す。
+     「Seller: {0}」のように数字や名前が入る文章は、型に当てはめて訳す。辞書にない文章は英語のまま */
+  const LANGS = { ja: "日本語", en: "English", "zh-Hans": "简体中文", ko: "한국어" };
+  const LOCALE = { ja: "ja-JP", en: "en-US", "zh-Hans": "zh-CN", ko: "ko-KR" };
+  let xRx = null;
+  const X = (en) => {
+    const D = window.JK_I18N_ZHKO;
+    if (!D || typeof en !== "string") return en;
+    const k = lang === "ko" ? 1 : 0;
+    const m0 = en.match(/^(\s*)([\s\S]*?)(\s*)$/);
+    const [, lead, core, trail] = m0;
+    if (D.exact[core]) return lead + D.exact[core][k] + trail;
+    xRx = xRx || D.templates.map(([rx, order, zh, ko]) => [new RegExp(rx), order, zh, ko]);
+    for (const [rx, , zh, ko] of xRx) {
+      const m = core.match(rx);
+      if (m) return lead + (k ? ko : zh).replace(/\{(\d)\}/g, (_, n) => (m[+n + 1] ?? "")) + trail;
+    }
+    return en;
+  };
+  const tr = (ja, en) => (lang === "ja" ? ja : lang === "en" ? en : X(en));
+  // データ（ツアー・講座など）：その言語の項目がなければ、英語を訳して使う
+  const pick = (o) => {
+    if (o[lang] !== undefined) return o[lang];
+    if (lang === "ja") return o.ja;
+    if (typeof o.en === "string") return X(o.en);
+    return Object.fromEntries(Object.entries(o.en).map(([k2, v]) => [k2, k2 === "tags" ? v : X(v)]));
+  };
 
   /* ---------- トースト通知 ---------- */
   const toastEl = $("#toast");
@@ -107,7 +137,7 @@
     $("#tourList").innerHTML = tours
       .filter((t) => tourArea === "all" || t.area === tourArea)
       .slice(0, isTop ? 3 : undefined)
-      .map((t) => { const d = t[lang]; return `
+      .map((t) => { const d = pick(t); return `
         <article class="card reveal">
           <div class="card__thumb" style="--thumb:${t.bg}">${JKArt.thumb(t.emoji, { pattern: "seigaiha" })}<span class="card__label">${esc(d.days)}</span></div>
           <div class="card__body">
@@ -163,7 +193,7 @@
     $("#courseList").innerHTML = courses
       .filter((c) => courseType === "all" || c.type === courseType)
       .slice(0, isTop ? 4 : undefined)
-      .map((c) => { const d = c[lang]; return `
+      .map((c) => { const d = pick(c); return `
         <article class="card reveal">
           <div class="card__thumb" style="--thumb:${c.bg}">${JKArt.thumb(c.emoji, { pattern: "shippo" })}
             <span class="card__label ${c.type === "live" ? "card__label--live" : ""}">${c.type === "live" ? "● LIVE" : tr("録画講座", "On demand")}</span></div>
@@ -214,7 +244,7 @@
     // 日本語・英語のどちらで検索しても見つかるようにする
     const hay = (v) => [v.ja.title, v.ja.ch, v.ja.tags, v.en.title, v.en.ch, v.en.tags].join(" ").toLowerCase();
     const list = topN(videos.filter((v) => words.every((w) => hay(v).includes(w))), 3);
-    $("#videoList").innerHTML = list.map((v) => { const d = v[lang]; return `
+    $("#videoList").innerHTML = list.map((v) => { const d = pick(v); return `
       <button class="video reveal" type="button" data-toast="${T.demoPlay()}">
         <div class="video__thumb" style="--thumb:${v.bg}">${JKArt.thumb(v.emoji, { pattern: "kikko", ratio: "16 / 9" })}<span class="video__time">${v.time}</span></div>
         <div class="video__info">
@@ -261,8 +291,8 @@
     if (!live("#theaterRows")) return;
     $("#theaterRows").innerHTML = topN(rows, 1).map((r) => `
       <div class="row">
-        <h3 class="row__title">${esc(r[lang])}</h3>
-        <div class="row__track" tabindex="0" aria-label="${esc(r[lang])}${tr("（横にスクロールできます）", " (scroll sideways)")}">
+        <h3 class="row__title">${esc(pick(r))}</h3>
+        <div class="row__track" tabindex="0" aria-label="${esc(pick(r))}${tr("（横にスクロールできます）", " (scroll sideways)")}">
           ${r.items.map(([ja, en, e, bg, isNew], i) => { const t = tr(ja, en); return `
             <button class="poster" type="button" style="--thumb:${bg}" data-toast="${esc(tr(`「${t}」はデモのため再生できません`, `"${t}" can't be played in this demo`))}">
               ${JKArt.patternBg(i % 2 ? "kikko" : "seigaiha")}<span class="poster__seal" aria-hidden="true"></span>
@@ -322,7 +352,7 @@
       .filter((i) => mFilter === "all" || i.kind === mFilter)
       .sort((a, b) => sort === "low" ? a.price - b.price : sort === "high" ? b.price - a.price : a.end - b.end)
       .slice(0, isTop ? 4 : undefined);
-    $("#marketList").innerHTML = list.map((i) => { const title = i[lang]; const on = watched.has(i.id); return `
+    $("#marketList").innerHTML = list.map((i) => { const title = pick(i); const on = watched.has(i.id); return `
       <article class="card">
         <div class="card__thumb" style="--thumb:${i.bg}">${JKArt.thumb(i.emoji, { pattern: "ichimatsu" })}
           <button class="watch" type="button" data-watch="${i.id}" aria-pressed="${on}" aria-label="${esc(tr(`「${title}」をお気に入りに${on ? "登録済み" : "追加"}`, on ? `Remove "${title}" from watchlist` : `Add "${title}" to watchlist`))}">${on ? "♥" : "♡"}</button></div>
@@ -393,7 +423,7 @@
   const renderFund = () => {
     if (!has("#fundList")) return;
     $("#fundList").innerHTML = projects.map((p) => {
-      const d = p[lang];
+      const d = pick(p);
       const pct = Math.min(100, Math.round((p.raised / p.goal) * 100));
       return `
       <article class="fund reveal">
@@ -418,7 +448,7 @@
       </article>`;
     }).join("");
     const cur = $("#simProject").value;
-    $("#simProject").innerHTML = projects.map((p) => `<option value="${p.id}">${esc(p[lang].title)}</option>`).join("");
+    $("#simProject").innerHTML = projects.map((p) => `<option value="${p.id}">${esc(pick(p).title)}</option>`).join("");
     if (cur) $("#simProject").value = cur;
     observeReveal();
   };
@@ -479,7 +509,7 @@
   let target = null;
   let currentZone = null;
   showZoneInfo = () => {
-    const info = (currentZone || plaza)[lang];
+    const info = pick(currentZone || plaza);
     $("#metaZone").textContent = info.name;
     $("#metaDesc").textContent = info.desc;
     $("#metaVisited").textContent = `${visited.size} / ${zones.length}`;
@@ -499,7 +529,7 @@
     warping = true;
     const warp = $("#metaWarp");
     warp.style.setProperty("--zone", z.color);
-    warp.querySelector("p").textContent = tr(`${z[lang].name}へ移動しています…`, `Heading to ${z[lang].name}…`);
+    warp.querySelector("p").textContent = tr(`${pick(z).name}へ移動しています…`, `Heading to ${pick(z).name}…`);
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     warp.classList.add("is-on");
     setTimeout(() => {
@@ -564,7 +594,7 @@
       });
       ctx.restore();
       ctx.font = "bold 17px 'Noto Sans JP', sans-serif"; ctx.fillStyle = "#fff";
-      ctx.fillText(z[lang].name, z.x + z.w / 2, z.y + z.h / 2 + 26);
+      ctx.fillText(pick(z).name, z.x + z.w / 2, z.y + z.h / 2 + 26);
       if (active) {
         const label = tr("Enter・タップで入る", "Press Enter or tap to enter");
         ctx.font = "bold 13px 'Noto Sans JP', sans-serif";
@@ -662,7 +692,7 @@
   document.body.appendChild(dlg);
   const closeFlow = () => { if (dlg.open) dlg.close(); };
   let flow = null; // { kind, step, ... }
-  const fmtDate = (d) => d.toLocaleDateString(lang === "en" ? "en-US" : "ja-JP", { month: "short", day: "numeric", weekday: "short" });
+  const fmtDate = (d) => d.toLocaleDateString(LOCALE[lang], { month: "short", day: "numeric", weekday: "short" });
   const row = (k, v) => `<div class="sum__row"><dt>${k}</dt><dd>${v}</dd></div>`;
   const demoNote = () => `<p class="flow-dlg__note">${tr("※デモのため、ここから先の送信・決済は行われません。", "* This is a demo. Nothing is sent or charged beyond this point.")}</p>`;
   const done = (title, text, links) => {
@@ -679,7 +709,7 @@
     const foot = (back, nextLabel, disabled) => { $("#flowFoot").innerHTML = (back ? `<button class="btn btn--line" type="button" data-back>${tr("戻る", "Back")}</button>` : "") + `<button class="btn btn--primary" type="button" data-next${disabled ? " disabled" : ""}>${nextLabel}</button>`; };
 
     if (f.kind === "tour") {
-      const t = tours[f.id], d = t[lang];
+      const t = tours[f.id], d = pick(t);
       if (f.step === 1) {
         head(1, 3, tr("日程を選ぶ", "Choose a date"));
         $("#flowBody").innerHTML = `<p class="flow-dlg__lead">${esc(d.title)}</p><div class="opt-list" role="radiogroup" aria-label="${tr("日程", "Date")}">${f.dates.map((x, i) => `
@@ -699,7 +729,7 @@
         foot(true, tr("この内容で予約する（デモ）", "Confirm booking (demo)"));
       }
     } else if (f.kind === "course") {
-      const c = courses[f.id], d = c[lang], live = c.type === "live";
+      const c = courses[f.id], d = pick(c), live = c.type === "live";
       if (f.step === 1) {
         head(1, 2, tr("講座の内容", "About this course"));
         $("#flowBody").innerHTML = `<p class="flow-dlg__lead">${esc(d.title)}</p><dl class="sum">${row(tr("形式", "Format"), live ? tr("ライブ（リアルタイムで参加）", "Live (join in real time)") : tr("録画（いつでも視聴）", "Recorded (watch anytime)"))}${row(tr("講師", "Instructor"), esc(d.teacher))}${row(live ? tr("開催日時", "Date and time") : tr("ボリューム", "Length"), esc(d.time))}${row(tr("評価", "Rating"), "★ " + c.rate.toFixed(1))}${row(tr("受講料", "Fee"), `<b>${c.price === 0 ? tr("無料", "Free") : yen(c.price)}</b>`)}</dl>`;
@@ -714,12 +744,12 @@
       const total = list.reduce((s, i) => s + i.price, 0);
       $("#flowStep").textContent = tr(`${list.length}点`, `${list.length} item${list.length === 1 ? "" : "s"}`);
       $("#flowTitle").textContent = tr("カート", "Your cart");
-      $("#flowBody").innerHTML = list.length ? `<ul class="cart-list">${list.map((i) => `<li><span class="cart-list__thumb" style="--thumb:${i.bg}">${JKArt.thumb(i.emoji, { pattern: "ichimatsu" })}</span><span class="cart-list__name">${esc(i[lang])}<small>${tr("出品者：", "Seller: ")}${esc(i.seller)}</small></span><b>${yen(i.price)}</b><button type="button" class="cart-list__del" data-del="${i.id}" aria-label="${esc(tr(`「${i[lang]}」をカートから削除`, `Remove "${i[lang]}" from cart`))}">×</button></li>`).join("")}</ul>
+      $("#flowBody").innerHTML = list.length ? `<ul class="cart-list">${list.map((i) => `<li><span class="cart-list__thumb" style="--thumb:${i.bg}">${JKArt.thumb(i.emoji, { pattern: "ichimatsu" })}</span><span class="cart-list__name">${esc(pick(i))}<small>${tr("出品者：", "Seller: ")}${esc(i.seller)}</small></span><b>${yen(i.price)}</b><button type="button" class="cart-list__del" data-del="${i.id}" aria-label="${esc(tr(`「${pick(i)}」をカートから削除`, `Remove "${pick(i)}" from cart`))}">×</button></li>`).join("")}</ul>
         <p class="flow-total">${tr("合計（送料込み）", "Total (shipping included)")}<strong>${yen(total)}</strong></p>${demoNote()}`
         : `<p class="flow-dlg__empty">${tr("カートは空です。即決価格の商品の「カートに入れる」を押すと、ここに入ります。", "Your cart is empty. Press “Add to cart” on a Buy It Now item to add it here.")}</p>`;
       $("#flowFoot").innerHTML = list.length ? `<button class="btn btn--line" type="button" data-close>${tr("買い物を続ける", "Keep shopping")}</button><button class="btn btn--primary" type="button" data-next>${tr("購入手続きへ進む（デモ）", "Proceed to checkout (demo)")}</button>` : `<button class="btn btn--primary" type="button" data-close>${tr("閉じる", "Close")}</button>`;
     } else if (f.kind === "fund") {
-      const p = projects.find((x) => x.id === f.pid) || projects[0], d = p[lang];
+      const p = projects.find((x) => x.id === f.pid) || projects[0], d = pick(p);
       head(1, 1, tr("支援内容を確認する", "Review your backing"));
       $("#flowBody").innerHTML = `<dl class="sum">${row(tr("案件", "Project"), esc(d.title))}${row(tr("口数", "Units"), tr(`${f.units}口`, `${f.units}`))}${row(tr("リスク区分", "Risk level"), tr(...riskLabel[p.risk]))}${row(tr("支援額", "Amount"), `<b>${yen(f.units * UNIT)}</b>`)}</dl>
         <label class="agree"><input type="checkbox" id="flowAgree"${f.agree ? " checked" : ""}><span>${tr("研究は成功が保証されたものではなく、支援したお金が戻らない可能性があることを理解しました。", "I understand that research is not guaranteed to succeed and that I may not get my money back.")}</span></label>${demoNote()}`;
@@ -729,8 +759,8 @@
   const openFlow = (f) => { flow = f; renderFlow(); if (!dlg.open) dlg.showModal(); $("#flowTitle").focus(); };
   const finishFlow = () => {
     const f = flow;
-    if (f.kind === "tour") done(tr("予約の流れを体験しました", "You've tried the booking flow"), tr(`「${tours[f.id][lang].title}」を、${fmtDate(f.dates[f.date].d)}・${f.n}名で予約する流れでした。`, `That was the flow for booking “${tours[f.id][lang].title}” on ${fmtDate(f.dates[f.date].d)} for ${f.n}.`), `<a class="btn btn--line" href="academy.html">${tr("関連する講座を見る", "Browse related courses")}</a>`);
-    else if (f.kind === "course") done(tr("申込みの流れを体験しました", "You've tried the enrollment flow"), tr(`「${courses[f.id][lang].title}」に申し込む流れでした。`, `That was the flow for enrolling in “${courses[f.id][lang].title}.”`), `<a class="btn btn--line" href="channel.html">${tr("工房チャンネルを見る", "Visit Koubo Channel")}</a>`);
+    if (f.kind === "tour") done(tr("予約の流れを体験しました", "You've tried the booking flow"), tr(`「${pick(tours[f.id]).title}」を、${fmtDate(f.dates[f.date].d)}・${f.n}名で予約する流れでした。`, `That was the flow for booking “${pick(tours[f.id]).title}” on ${fmtDate(f.dates[f.date].d)} for ${f.n}.`), `<a class="btn btn--line" href="academy.html">${tr("関連する講座を見る", "Browse related courses")}</a>`);
+    else if (f.kind === "course") done(tr("申込みの流れを体験しました", "You've tried the enrollment flow"), tr(`「${pick(courses[f.id]).title}」に申し込む流れでした。`, `That was the flow for enrolling in “${pick(courses[f.id]).title}.”`), `<a class="btn btn--line" href="channel.html">${tr("工房チャンネルを見る", "Visit Koubo Channel")}</a>`);
     else if (f.kind === "cart") { const n = cart.size; cart.clear(); saveCart(); renderMarket(); done(tr("購入の流れを体験しました", "You've tried the checkout flow"), tr(`${n}点の商品を購入する流れでした。カートは空に戻しました。`, `That was the flow for buying ${n} item${n === 1 ? "" : "s"}. Your cart has been emptied.`), ""); }
     else if (f.kind === "fund") done(tr("支援の流れを体験しました", "You've tried the backing flow"), tr(`${f.units}口（${yen(f.units * UNIT)}）を支援する流れでした。`, `That was the flow for backing ${f.units} unit${f.units === 1 ? "" : "s"} (${yen(f.units * UNIT)}).`), "");
     flow = null;
@@ -1042,19 +1072,20 @@
     I18N_STATIC.forEach(([sel, en, attr], i) => {
       const el = $(sel);
       if (!el || I18N_JA[i] == null) return;
-      const v = lang === "en" ? en : I18N_JA[i];
+      const v = lang === "ja" ? I18N_JA[i] : lang === "en" ? en : X(en);
       if (attr) el.setAttribute(attr, v); else el.innerHTML = v;
     });
-    keyEls.forEach((el) => { el.innerHTML = lang === "en" ? I18N_KEYS[el.dataset.i18n] : keyJa.get(el); });
+    keyEls.forEach((el) => { el.innerHTML = lang === "ja" ? keyJa.get(el) : lang === "en" ? I18N_KEYS[el.dataset.i18n] : X(I18N_KEYS[el.dataset.i18n]); });
     document.documentElement.lang = lang;
-    document.title = TITLE[lang];
+    // タイトルは「ページ名 | 人生工房」の形なので、区切りごとに訳す
+    document.title = lang === "ja" ? TITLE.ja : lang === "en" ? TITLE.en : TITLE.en.split(" | ").map((part) => X(part)).join(" | ");
     // 出典リンク（↗）は記号だけなので、読み上げ用の名前を付ける
     $$(".stat__src a, .learn-card__policy a").forEach((a) => a.setAttribute("aria-label", tr("出典を開く（新しいタブ）", "Open source (new tab)")));
     // たたんだ部分の「続きを見る」ボタン
     $$(".fold-btn").forEach((b) => { const open = b.getAttribute("aria-expanded") === "true"; b.textContent = open ? tr("たたむ", "Show less") : tr("続きを見る", "Show more"); });
     // 言語メニュー：ボタンには「今の言語」を表示し、選択中の項目に印を付ける
     const btn = $("#langToggle");
-    btn.textContent = lang === "en" ? "English" : "日本語";
+    btn.textContent = LANGS[lang];
     btn.removeAttribute("aria-label");
     btn.title = tr("言語を選ぶ", "Choose language");
     $$("#langMenu [data-lang]").forEach((b) => b.setAttribute("aria-current", String(b.dataset.lang === lang)));
@@ -1099,6 +1130,16 @@
   langBtn.addEventListener("click", (e) => { e.stopPropagation(); setLangMenu(langMenu.hidden); });
   document.addEventListener("click", (e) => { if (!e.target.closest(".lang-switch")) setLangMenu(false); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !langMenu.hidden) { setLangMenu(false); langBtn.focus(); } });
+  const loadZhKo = (done) => {
+    // 書体：中国語は Noto Sans SC / Noto Serif SC、韓国語は Noto Sans KR / Noto Serif KR
+    const fam = lang === "ko" ? "Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@700;900" : "Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900";
+    if (!document.querySelector(`link[data-font="${lang}"]`)) {
+      const l = document.createElement("link"); l.rel = "stylesheet"; l.dataset.font = lang;
+      l.href = `https://fonts.googleapis.com/css2?family=${fam}&display=swap`; document.head.appendChild(l);
+    }
+    if (window.JK_I18N_ZHKO) return done();
+    const s = document.createElement("script"); s.src = "assets/js/i18n-zhko.js"; s.onload = done; s.onerror = done; document.head.appendChild(s);
+  };
   langMenu.addEventListener("click", (e) => {
     const b = e.target.closest("[data-lang]");
     if (!b) return;
@@ -1107,7 +1148,9 @@
     if (b.dataset.lang === lang) return;
     lang = b.dataset.lang;
     try { localStorage.setItem(LANG_KEY, lang); } catch (_) { /* 保存不可の環境 */ }
-    keepScrollPosition(applyLang);
+    const go = () => { keepScrollPosition(applyLang); toast(tr("日本語に切り替えました", "Switched to English")); };
+    if (lang === "zh-Hans" || lang === "ko") loadZhKo(go); else go();
+    return;
     toast(tr("日本語に切り替えました", "Switched to English"));
   });
 
@@ -1249,5 +1292,5 @@
   window.addEventListener("scroll", () => toTop.classList.toggle("is-show", window.scrollY > 800), { passive: true });
   toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }));
 
-  applyLang();
+  if (lang === "zh-Hans" || lang === "ko") { applyLang(); loadZhKo(applyLang); } else applyLang();
 })();

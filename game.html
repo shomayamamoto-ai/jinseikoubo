@@ -27,6 +27,7 @@
     @media (max-width: 420px) { .g-title { display: none; } .g-back { margin-right: auto; } }
     .g-lang { min-height: 44px; padding: 0 12px; border-radius: var(--shape-sm); border: 1px solid #3a3470; background: transparent; color: #ebe9f3; font-size: 14px; font-weight: 700; }
     .g-lang:hover { background: rgba(255,255,255,.08); }
+    .g-lang option { color: #1d1d1f; }
     .g-main { padding-block: 40px 72px; }
     .g-wrap { max-width: 720px; margin: 0 auto; }
     .g-eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .22em; color: #a9a3c6; }
@@ -74,7 +75,7 @@
     <div class="container">
       <a class="g-back" href="metaverse.html" id="gBack"><span aria-hidden="true">←</span><svg class="g-mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#lg-mark"/></svg><span data-t="back">メタバースに戻る</span></a>
       <p class="g-title" data-t="arena">ゲームアリーナ</p>
-      <button class="g-lang" id="gLang" type="button" aria-label="Switch to English">EN</button>
+      <select class="g-lang" id="gLang" aria-label="言語 / Language"><option value="ja">日本語</option><option value="en">English</option><option value="zh-Hans">简体中文</option><option value="ko">한국어</option></select>
     </div>
   </header>
 
@@ -111,10 +112,25 @@
     let lang = "ja";
     try {
       const saved = localStorage.getItem(LANG_KEY);
-      if (saved === "ja" || saved === "en") lang = saved;
-      else if (!(navigator.language || "ja").toLowerCase().startsWith("ja")) lang = "en";
+      const nl = (navigator.language || "ja").toLowerCase();
+      if (["ja", "en", "zh-Hans", "ko"].includes(saved)) lang = saved;
+      else lang = nl.startsWith("ja") ? "ja" : nl.startsWith("zh") ? "zh-Hans" : nl.startsWith("ko") ? "ko" : "en";
     } catch (_) { /* 保存不可の環境では日本語 */ }
-    const tr = (ja, en) => (lang === "en" ? en : ja);
+    // 中国語・韓国語：英語の文章をキーにした辞書（assets/js/i18n-zhko.js）で訳す
+    const X = (en) => {
+      const D = window.JK_I18N_ZHKO; if (!D) return en;
+      const k = lang === "ko" ? 1 : 0;
+      if (D.exact[en.trim()]) return D.exact[en.trim()][k];
+      for (const [rx, , zh, ko] of D.templates) { const m = en.match(new RegExp(rx)); if (m) return (k ? ko : zh).replace(/\{(\d)\}/g, (_, n) => m[+n + 1] ?? ""); }
+      return en;
+    };
+    const tr = (ja, en) => (lang === "ja" ? ja : lang === "en" ? en : X(en));
+    const loadZhKo = (done) => {
+      const fam = lang === "ko" ? "Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@700;900" : "Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900";
+      if (!document.querySelector(`link[data-font="${lang}"]`)) { const l = document.createElement("link"); l.rel = "stylesheet"; l.dataset.font = lang; l.href = `https://fonts.googleapis.com/css2?family=${fam}&display=swap`; document.head.appendChild(l); }
+      if (window.JK_I18N_ZHKO) return done();
+      const sc = document.createElement("script"); sc.src = "assets/js/i18n-zhko.js"; sc.onload = done; sc.onerror = done; document.head.appendChild(sc);
+    };
 
     const UI = {
       back: ["メタバースに戻る", "Back to the Metaverse"],
@@ -147,7 +163,7 @@
     let order = [], idx = 0, score = 0;
     const shuffle = (a) => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
     const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-    const L = (pair) => pair[lang === "en" ? 1 : 0];
+    const L = (pair) => tr(pair[0], pair[1]);
 
     const start = () => { order = QUIZ.map((q) => ({ ...q, opts: shuffle(q.choices.map((c, i) => ({ c, right: i === 0 }))) })); idx = 0; score = 0; renderQ(); };
 
@@ -217,20 +233,19 @@
       document.documentElement.lang = lang;
       document.title = tr("工房クイズ | 人生工房 ゲームアリーナ", "Koubo Quiz | Jinsei Koubo Game Arena");
       document.querySelectorAll("[data-t]").forEach((el) => { el.textContent = L(UI[el.dataset.t]); });
-      const b = $("#gLang");
-      b.textContent = lang === "en" ? "日本語" : "EN";
-      b.setAttribute("aria-label", lang === "en" ? "日本語に切り替える" : "Switch to English");
+      $("#gLang").value = lang;
     };
-    $("#gLang").addEventListener("click", () => {
-      lang = lang === "en" ? "ja" : "en";
+    const rerender = () => { applyLang(); if (card.querySelector(".g-result")) renderResult(); else renderQ(); };
+    $("#gLang").addEventListener("change", (e) => {
+      lang = e.target.value;
       try { localStorage.setItem(LANG_KEY, lang); } catch (_) { /* 保存不可の環境 */ }
-      applyLang();
       // 表示中の画面を、言語だけ切り替えて表示し直す（回答前の状態に戻る）
-      if (card.querySelector(".g-result")) renderResult(); else renderQ();
+      if (lang === "zh-Hans" || lang === "ko") loadZhKo(rerender); else rerender();
     });
 
     applyLang();
     start();
+    if (lang === "zh-Hans" || lang === "ko") loadZhKo(rerender);
   })();
   </script>
 </body>

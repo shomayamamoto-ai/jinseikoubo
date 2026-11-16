@@ -318,10 +318,10 @@ button { cursor: pointer; }
   .hero__lead br { display: none; }
   .hero__cta { grid-area: cta; }
 }
-:root[lang="en"] .hero__eyebrow, :root[lang="en"] .hero__lead { writing-mode: horizontal-tb; height: auto; }
-:root[lang="en"] .hero__lead { max-width: 22em; line-height: 1.9; letter-spacing: 0; }
-:root[lang="en"] .hero__pre, :root[lang="en"] .hero__post { letter-spacing: .02em; }
-:root[lang="en"] .hero__big { width: auto; aspect-ratio: auto; padding: 0 .12em; font-size: clamp(64px, 16vw, 112px); line-height: 1.25; }
+:root:not([lang="ja"]) .hero__eyebrow, :root:not([lang="ja"]) .hero__lead { writing-mode: horizontal-tb; height: auto; }
+:root:not([lang="ja"]) .hero__lead { max-width: 22em; line-height: 1.9; letter-spacing: 0; }
+:root:not([lang="ja"]) .hero__pre, :root:not([lang="ja"]) .hero__post { letter-spacing: .02em; }
+:root:not([lang="ja"]) .hero__big { width: auto; aspect-ratio: auto; padding: 0 .12em; font-size: clamp(64px, 16vw, 112px); line-height: 1.25; }
 
 /* ---------- 考え方（黒箱の強調・縦書きラベル） ---------- */
 .concept { position: relative; overflow: hidden; }
@@ -351,8 +351,8 @@ button { cursor: pointer; }
   .concept__stamps { grid-area: stamps; }
   .concept__text { grid-area: text; align-self: end; }
 }
-:root[lang="en"] .concept__label { writing-mode: horizontal-tb; font-family: var(--font-mono); letter-spacing: .2em; }
-:root[lang="en"] .concept__title { letter-spacing: 0; }
+:root:not([lang="ja"]) .concept__label { writing-mode: horizontal-tb; font-family: var(--font-mono); letter-spacing: .2em; }
+:root:not([lang="ja"]) .concept__title { letter-spacing: 0; }
 
 /* ---------- sections ---------- */
 .section { padding-block: 80px; }
@@ -366,7 +366,7 @@ button { cursor: pointer; }
 }
 .section__en::after { content: ""; width: 40px; height: 1px; background: currentColor; }
 .section__title { font-family: var(--font-display); font-weight: 800; font-size: clamp(28px, 5vw, 48px); line-height: 1.4; letter-spacing: .08em; }
-:root[lang="en"] .section__title { letter-spacing: 0; }
+:root:not([lang="ja"]) .section__title { letter-spacing: 0; }
 .section__lead { margin-top: 16px; color: var(--text-sub); font-size: 16px; max-width: 46em; line-height: 2; }
 .badge {
   display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 2px;
@@ -381,7 +381,7 @@ button { cursor: pointer; }
   .services__head { grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 56px; }
   .services__title { grid-column: 2; grid-row: 1; writing-mode: vertical-rl; font-size: 56px; letter-spacing: .2em; line-height: 1.2; }
   .services__head .section__lead { grid-column: 1; grid-row: 1; margin: 0; }
-  :root[lang="en"] .services__title { writing-mode: horizontal-tb; font-size: 48px; letter-spacing: 0; }
+  :root:not([lang="ja"]) .services__title { writing-mode: horizontal-tb; font-size: 48px; letter-spacing: 0; }
 }
 .works { display: grid; gap: 4px; }
 .work {
@@ -679,7 +679,7 @@ button { cursor: pointer; }
 .join__inner { width: 100vw; max-width: 1180px; }
 @media (max-width: 767px) { .join__arc { --arc-w: 170vw; border-radius: 50% 50% 0 0 / 60% 60% 0 0; } }
 .join__title { font-family: var(--font-display); font-weight: 800; font-size: clamp(24px, 4vw, 38px); letter-spacing: .08em; }
-:root[lang="en"] .join__title { letter-spacing: 0; }
+:root:not([lang="ja"]) .join__title { letter-spacing: 0; }
 .join__inner > p:not(.join__msg) { margin-top: 12px; color: #fff; }
 .join__form { margin: 28px auto 0; display: flex; flex-wrap: wrap; gap: 10px; max-width: 540px; }
 .join__form input { flex: 1 1 240px; min-width: 0; min-height: 52px; padding: 0 20px; border-radius: 2px; border: 0; color: #111; background: #fff; }
@@ -1003,12 +1003,12 @@ input[type="range"]::-moz-range-thumb { width: 28px; height: 28px; }
   .data-table td::before { display: block; font-size: 14px; font-weight: 700; color: var(--text-sub); margin-bottom: 2px; }
   :root[lang="ja"] .data-table--model td:nth-of-type(1)::before { content: "主な収益"; }
   :root[lang="ja"] .data-table--model td:nth-of-type(2)::before { content: "ほかのサービスへのつながり"; }
-  :root[lang="en"] .data-table--model td:nth-of-type(1)::before { content: "Main revenue"; }
-  :root[lang="en"] .data-table--model td:nth-of-type(2)::before { content: "How it feeds the others"; }
+  :root:not([lang="ja"]) .data-table--model td:nth-of-type(1)::before { content: "Main revenue"; }
+  :root:not([lang="ja"]) .data-table--model td:nth-of-type(2)::before { content: "How it feeds the others"; }
   :root[lang="ja"] .data-table:not(.data-table--model) td:nth-of-type(1)::before { content: "支援者が受け取るもの"; }
   :root[lang="ja"] .data-table:not(.data-table--model) td:nth-of-type(2)::before { content: "人生工房での考え方"; }
-  :root[lang="en"] .data-table:not(.data-table--model) td:nth-of-type(1)::before { content: "What backers receive"; }
-  :root[lang="en"] .data-table:not(.data-table--model) td:nth-of-type(2)::before { content: "Our approach"; }
+  :root:not([lang="ja"]) .data-table:not(.data-table--model) td:nth-of-type(1)::before { content: "What backers receive"; }
+  :root:not([lang="ja"]) .data-table:not(.data-table--model) td:nth-of-type(2)::before { content: "Our approach"; }
 
   /* 画面下の事前登録ボタン（ファーストビューを過ぎたら表示） */
   .m-cta {
@@ -1145,7 +1145,7 @@ svg.logo__mark { color: inherit; }
 .page-hero__inner { display: grid; gap: 32px; align-items: center; }
 @media (min-width: 900px) { .page-hero__inner { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 56px; } }
 .page-hero__title { font-family: var(--font-display); font-weight: 800; font-size: clamp(30px, 5.6vw, 52px); line-height: 1.3; letter-spacing: .04em; }
-:root[lang="en"] .page-hero__title { letter-spacing: 0; }
+:root:not([lang="ja"]) .page-hero__title { letter-spacing: 0; }
 .page-hero__lead { margin-top: 18px; font-size: 17px; color: var(--text-sub); max-width: 34em; }
 .page-hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 .page-hero__cta .btn { flex: 1 1 200px; max-width: 280px; }
@@ -1198,7 +1198,9 @@ svg.logo__mark { color: inherit; }
   @keyframes stamp { from { opacity: 0; transform: scale(1.18); filter: blur(6px); } 60% { opacity: 1; filter: blur(0); } to { transform: none; } }
   .hero__pre { animation: rise .8s var(--ease-emph-decel) .05s both; }
   .hero__post { animation: rise .8s var(--ease-emph-decel) .7s both; }
-  .hero__eyebrow, .hero__lead { animation: fade-in 1s var(--ease-standard) .9s both; }
+  /* 紹介文は「最初に見える主な内容」なので、待たせず・透明にせず、薄い状態から始める */
+  .hero__eyebrow, .hero__lead { animation: fade-soft .8s var(--ease-standard) both; }
+  @keyframes fade-soft { from { opacity: .35; } }
   .hero__cta { animation: rise .8s var(--ease-emph-decel) 1.1s both; }
   @keyframes fade-in { from { opacity: 0; } }
 
@@ -1403,3 +1405,14 @@ main:has(> .hero) [data-detail] { display: none; }
 @media (prefers-reduced-motion: no-preference) {
   body, .header, .card, .section--tint, .stat, .feature, .point, .other { transition: background-color var(--dur-medium) var(--ease-standard), color var(--dur-medium) var(--ease-standard); }
 }
+
+
+/* =========================================================
+   中国語（簡体字）・韓国語
+   ========================================================= */
+:root[lang="zh-Hans"] { --font: "Noto Sans SC", "Noto Sans JP", system-ui, sans-serif; --font-display: "Noto Serif SC", "Shippori Mincho", serif; }
+:root[lang="ko"] { --font: "Noto Sans KR", "Noto Sans JP", system-ui, sans-serif; --font-display: "Noto Serif KR", "Shippori Mincho", serif; }
+/* 韓国語は、単語の途中で改行しない */
+:root[lang="ko"] body { word-break: keep-all; overflow-wrap: anywhere; }
+/* 縦書きのポスターのタイトルは、中国語・韓国語では横書きに */
+:root:not([lang="ja"]) .poster__title { writing-mode: horizontal-tb; }
